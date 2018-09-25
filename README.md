@@ -1,7 +1,7 @@
 # PongApp
 A Pong web app by Kevin, Skyler, Richard, Jim, and Allen (in no particular order)
 
-##Initialization
+## Initialization
  1. Clone this repository with `git clone git@github.com:Skyler827/PongApp.git`
  2. Log into Mysql and run the following commands:
  
