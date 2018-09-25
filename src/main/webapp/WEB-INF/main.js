@@ -6,6 +6,9 @@ var ball_geo, ball_mesh, ball, ball_vx, ball_vy;
 var frame_geo, frame_mesh, frame;
 var t, previous_t, dt;
 var mouse;
+var gridHelper;
+var objects = [];
+
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -60,11 +63,19 @@ function init() {
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
+    // gridHelper = new THREE.GridHelper( 20, 20 );
+
+    // gridHelper.rotateX(3.14159/2);
+    // scene.add( gridHelper );
 
 }
 function onDocumentMouseMove(event) {
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+
+    raycaster.setFromCamera(mouse, camera);
+    var intersects = raycaster.intersectObjects(objects);
+    console.log(intersects);
 }
 function collide() {
     var next_x = ball.position.x+ ball_vx*0.05;
