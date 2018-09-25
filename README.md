@@ -1,5 +1,5 @@
 # PongApp
-A Pong web app by Kevin, Skyler, Richard, Jim, and Allen (in no particular order)
+A Pong web app by Allen ,Kevin, Skyler, Richard, and Jim. (In no particular order)
 
 ## Initialization
  1. Clone this repository with `git clone git@github.com:Skyler827/PongApp.git`
