@@ -67,15 +67,27 @@ function onDocumentMouseMove(event) {
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 }
 function collide() {
-    var next_x = ball.position.x+ ball_vx*0.05;
-    if (9.5 < next_x || next_x < -9.5) {
-        ball_vx *= -1;
-    }
+	//Checking both paddles, could be limited with direction of ball velocity
+	//Could also be checked if the ball is close to the a paddle
+    paddleCollision(left_paddle, ball);
+    paddleCollision(right_paddle, ball);
+    
     var next_y = ball.position.y + ball_vy*0.05;
     if (5 < next_y || next_y < -5) {
         ball_vy *= -1;
     }
 }
+
+//Checks if the paddle passed in is in collision with the ball
+function paddleCollision(paddle, ball){
+	let p = new THREE.Box3().setFromObject(paddle);
+	let b = new THREE.Box3().setFromObject(ball);
+	let col = p.isIntersectionBox(b);
+	if(col){
+		ball_vx *= -1;
+	}
+}
+
 function update() {
     t = performance.now()/1000;
     collide();
