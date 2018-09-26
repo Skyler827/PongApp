@@ -11,6 +11,15 @@ var gridHelper;
 var left_paddle_mouse_grabber;
 var arr_mouse_grabber;
 
+var x = 10,
+    y = 5,
+    velY = 0,
+    velX = 0,
+    speed = .5,
+    accel = .02,
+    friction = .95,
+    keys = [];
+
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -71,36 +80,9 @@ function init() {
     frame.scale.y = 0.75;
     scene.add(frame);
     t = 0;
-    document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     left_up = false; left_down = false; right_up = false; right_down = false;
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
-    document.addEventListener("keydown", onDocumentKeyDown, false);document.addEventListener("keyup", onkeyup, false);
-}
-function onDocumentKeyDown(event) {
-    var keyCode = event.which;
-    if (keyCode == 87) {
-        left_up = true;
-    } else if (keyCode == 83) {
-        left_down = true;
-    } else if (keyCode == 38) {
-        right_up = true;
-    } else if (keyCode == 40) {
-        right_down = true;
-    }
-    console.log(keyCode);
-}
-function onkeyup(event){
-    var keyCode = event.which;
-    if (keyCode == 87) {
-        left_up = false;
-    } else if (keyCode == 83) {
-        left_down = false;
-    } else if (keyCode == 38) {
-        right_up = false;
-    } else if (keyCode == 40) {
-        right_down = false;
-    }
 }
 
 function onDocumentMouseMove(event) {
@@ -153,12 +135,64 @@ function keyboardMovement(){
 function update() {
     t = performance.now()/1000;
     collide();
-    keyboardMovement();
+    // keyboardMovement();
     // left_paddle.translateY(0.09*Math.cos(t));
     // right_paddle.translateY(0.1*Math.cos(t+5));
+    if (keys[38]) {
+        if (velY > -speed) {
+            velY += accel;
+        }
+    }
+    
+    if (keys[40]) {
+        if (velY < speed) {
+            velY -= accel;
+        }
+    }
+    if (keys[39]) {
+        if (velX < speed) {
+            velX += accel;
+        }
+    }
+    if (keys[37]) {
+        if (velX > -speed) {
+            velX -= accel;
+        }
+    }
+
+    velY *= friction;
+    if(velY > 0){
+        if(left_paddle.position.y <= 5){
+            left_paddle.translateY(velY);
+        }
+    }else{
+        if(left_paddle.position.y >= -5){
+            left_paddle.translateY(velY);
+        }
+    }
+    velX *= friction;
+    if(velX > 0){
+        if(left_paddle.position.x <= 0){
+            left_paddle.translateX(velX);
+        }
+    }else{
+        if(left_paddle.position.x >= -10){
+            left_paddle.translateX(velX);
+        }
+    }
+
+
     ball.translateX(0.05*ball_vx);
     ball.translateY(0.05*ball_vy);
 }
+
+document.body.addEventListener("keydown", function (e) {
+    keys[e.keyCode] = true;
+});
+document.body.addEventListener("keyup", function (e) {
+    keys[e.keyCode] = false;
+});
+
 function animate() {
     update();
     requestAnimationFrame( animate );
