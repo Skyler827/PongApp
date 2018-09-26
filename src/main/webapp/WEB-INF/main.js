@@ -174,7 +174,7 @@ function update() {
     }
     paddle_velX *= friction;
     if(paddle_velX > 0){
-        if(left_paddle.position.x <= 0){
+        if(left_paddle.position.x <= -3){
             left_paddle.translateX(paddle_velX);
         }
     }else{
