@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.codingdojo.pongapp.models.Role;
 import com.codingdojo.pongapp.models.User;
 import com.codingdojo.pongapp.repositories.RoleRepository;
 import com.codingdojo.pongapp.repositories.UserRepository;
@@ -37,7 +38,14 @@ public class PongAppController {
 	private RoleRepository roleRepository;
 	
 	@GetMapping("/login")
-    public String login(@RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
+    public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
+		if(roleRepository.findByName("ROLE_USER") == null) {
+			roleRepository.save(new Role("ROLE_USER"));
+		}
+		if(roleRepository.findByName("ROLE_ADMIN") == null) {
+			roleRepository.save(new Role("ROLE_ADMIN"));
+		}
+		if(principal != null) { return "redirect:/dashboard"; }
         if(error != null) {
             model.addAttribute("errorMessage", "Invalid Credentials, Please try again.");
         }
@@ -46,17 +54,6 @@ public class PongAppController {
         }
         return "loginReg.jsp";
     }
-	
-	@GetMapping("/success")
-	public String success(Principal principal) {
-		String email = principal.getName();
-		User currentUser = userRepository.findByEmail(email);
-		if(currentUser.getRoles().contains(roleRepository.findByName("ROLE_USER"))) {
-			return "redirect:/users/"+currentUser.getId();
-		}else {
-			return "redirect:/packages";	
-		}
-	}
 	
 	@PostMapping(value="/register", params = "register")
 	public String register(@Valid @ModelAttribute User user, BindingResult result, HttpSession session, @RequestParam String register, @RequestParam("email") String email, @RequestParam("password") String password, HttpServletRequest request) {
@@ -76,7 +73,12 @@ public class PongAppController {
 		}
 	}
 	
-	@GetMapping("/dasboard")
+	@GetMapping("/")
+	public String success() {
+		return "redirect:/dashboard";
+	}
+	
+	@GetMapping("/dashboard")
 	public String dashboard() {
 		return "dashboard.jsp";
 	}
