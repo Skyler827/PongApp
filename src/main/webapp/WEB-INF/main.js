@@ -109,6 +109,7 @@ function collide() {
 	//Could also be checked if the ball is close to the a paddle
     paddleCollision(left_paddle, ball);
     paddleCollision(right_paddle, ball);
+
     
     var next_y = ball.position.y + ball_vy*0.05;
     if (5 < next_y || next_y < -5) {
@@ -122,13 +123,15 @@ function paddleCollision(paddle, ball){
 	let b = new THREE.Box3().setFromObject(ball);
 	let col = p.intersectsBox(b);
 	if(col){
-		ball_vx *= -1;
+        ball_vx *= -1;
+        playSoundOnce('/img/ping.mp3');
 	}
 }
 
 function returnBall() {
     ball.position.x = 0;
     ball.position.y = 0;
+    playSoundOnce('/img/out.mp3');
 }
 function pauseGame() {
     paused = true;
@@ -210,7 +213,7 @@ document.body.addEventListener("keydown", function (e) {
     console.log(e.keyCode);
     if (e.keyCode === 32 && paused === true) {
         resumeGame();
-    }
+        }
 });
 document.body.addEventListener("keyup", function (e) {
     keys[e.keyCode] = false;
@@ -222,6 +225,21 @@ function animate() {
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 }
+
+function sound() {
+    myAudio = new Audio('/img/audio.mp3'); 
+myAudio.addEventListener('ended', function() {
+    this.currentTime = 0;
+    this.play();
+}, false);
+myAudio.play();
+}
+
+function playSoundOnce(path) {
+    bgSound = new Audio(path);
+    bgSound.play(); 
+}
+
 
 init();
 animate();
