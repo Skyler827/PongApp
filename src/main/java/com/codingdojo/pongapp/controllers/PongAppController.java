@@ -9,6 +9,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,6 +26,7 @@ import com.codingdojo.pongapp.models.User;
 import com.codingdojo.pongapp.repositories.RoleRepository;
 import com.codingdojo.pongapp.repositories.UserRepository;
 import com.codingdojo.pongapp.services.UserService;
+import com.codingdojo.pongapp.socketobjects.ClientKeyEventMessage;
 import com.codingdojo.pongapp.validators.UserValidator;
 
 @Controller
@@ -83,4 +86,15 @@ public class PongAppController {
 		return "dashboard.jsp";
 	}
 	
+	@GetMapping("/game")
+	public String game(){
+		return "/static/game.html";
+	}
+
+	@MessageMapping("/myMovements")
+	@SendTo("/topic/thisGame")
+	public ClientKeyEventMessage keyM(ClientKeyEventMessage message) throws Exception{
+		System.out.println(message);
+		return message;
+	}
 }
