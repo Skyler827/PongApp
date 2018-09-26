@@ -1,0 +1,52 @@
+.wrapper {
+    background: #2D2E2E;
+    height: 100%;
+    color: #ffffff;
+}
+nav {
+    background: #2D2E2E;
+    width: 290px;
+    height: 60px;
+    position: fixed;
+}
+ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+li {
+    display: inline;
+}
+li a {
+    color: #fff;
+    padding: 23px;
+    display: inline;
+}
+i {
+    margin-top: 12px;
+} 
+.activated {
+    background-color: #ffc600;
+} 
+/* .user {
+    width: 100%;
+    height: 100px;
+    background-color: blue;
+}
+.mini-img-box {
+    width: 75px;
+    vertical-align: top;
+    background: yellow;
+}
+.review-mini-img {
+    width: 100%;
+    margin-top: 10px;
+    border-radius: 50%;
+}
+.review-mini-info {
+    margin: 0px 0px 0px 30px;
+    padding: 25px 0px 0px 0px;
+}
+.inline {
+    display: inline-block;
+} */

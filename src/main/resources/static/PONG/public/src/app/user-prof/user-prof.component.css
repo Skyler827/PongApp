@@ -1,0 +1,27 @@
+.user {
+    background: rgb(67, 65, 65);
+    margin: 20px 0px;
+    height: 100px;
+    padding: 5px 5px;
+}
+.user-image {
+    height: 100px;
+    width: 100px;
+    background-color: rgb(115, 115, 233);
+    border-radius: 50px;
+}
+.mini-info {
+    padding: 10px 20px;
+    vertical-align: top;
+}
+h3, h5 {
+    margin: 0px;
+    padding: 0px 0px 5px 0px;
+}
+.inline {
+    display: inline-block;
+}
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+}

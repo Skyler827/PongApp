@@ -1,0 +1,29 @@
+body {
+    margin: 0;
+    background: red;
+    height: 100vh;
+}
+#container {
+    display: grid;
+    grid-template-columns: 70px 300px auto 290px;
+    grid-column-gap: 10px;
+    height: 100vh;
+    border: 2px solid red;
+}
+#content {
+    padding: 30px 50px;
+}
+app-left, app-right {
+    margin: 0px;
+    padding: 0px;
+    background: #2D2E2E;
+    height: 100%;
+    color: #ffffff;
+}
+.inline {
+    display: inline-block;
+}
+.flex-container {
+    display: flex;
+    justify-content: space-between;
+}

@@ -23,3 +23,44 @@
 /dist/
 /nbdist/
 /.nb-gradle/
+
+
+# Angular
+# compiled output
+/src/main/resources/static/PONG/public/dist
+/src/main/resources/static/PONG/public/tmp
+/src/main/resources/static/PONG/public/out-tsc
+
+# dependencies
+/src/main/resources/static/PONG/public/node_modules
+
+# IDEs and editors
+/src/main/resources/static/PONG/public/.idea
+/src/main/resources/static/PONG/public/.project
+/src/main/resources/static/PONG/public/.classpath
+/src/main/resources/static/PONG/public/.c9/
+/src/main/resources/static/PONG/public/*.launch
+/src/main/resources/static/PONG/public/.settings/
+/src/main/resources/static/PONG/public/*.sublime-workspace
+
+# IDE - VSCode
+/src/main/resources/static/PONG/public/.vscode/*
+/src/main/resources/static/PONG/public/!.vscode/settings.json
+/src/main/resources/static/PONG/public/!.vscode/tasks.json
+/src/main/resources/static/PONG/public/!.vscode/launch.json
+/src/main/resources/static/PONG/public/!.vscode/extensions.json
+
+# misc
+/src/main/resources/static/PONG/public/.sass-cache
+/src/main/resources/static/PONG/public/connect.lock
+/src/main/resources/static/PONG/public/coverage
+/src/main/resources/static/PONG/public/libpeerconnection.log
+/src/main/resources/static/PONG/public/npm-debug.log
+/src/main/resources/static/PONG/public/yarn-error.log
+/src/main/resources/static/PONG/public/testem.log
+/src/main/resources/static/PONG/public/typings
+
+# System Files
+/src/main/resources/static/PONG/public/.DS_Store
+/src/main/resources/static/PONG/public/Thumbs.db
+
