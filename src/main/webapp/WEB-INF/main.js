@@ -6,6 +6,8 @@ var ball_geo, ball_mesh, ball, ball_vx, ball_vy;
 var frame_geo, frame_mesh, frame;
 var t, previous_t, dt;
 var mouse;
+var left_up, left_down, right_up, right_down;
+
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
@@ -58,10 +60,37 @@ function init() {
     scene.add(frame);
     t = 0;
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
+    left_up = false; left_down = false; right_up = false; right_down = false;
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
-
+    document.addEventListener("keydown", onDocumentKeyDown, false);document.addEventListener("keyup", onkeyup, false);
 }
+function onDocumentKeyDown(event) {
+    var keyCode = event.which;
+    if (keyCode == 87) {
+        left_up = true;
+    } else if (keyCode == 83) {
+        left_down = true;
+    } else if (keyCode == 38) {
+        right_up = true;
+    } else if (keyCode == 40) {
+        right_down = true;
+    }
+    console.log(keyCode);
+}
+function onkeyup(event){
+    var keyCode = event.which;
+    if (keyCode == 87) {
+        left_up = false;
+    } else if (keyCode == 83) {
+        left_down = false;
+    } else if (keyCode == 38) {
+        right_up = false;
+    } else if (keyCode == 40) {
+        right_down = false;
+    }
+}
+
 function onDocumentMouseMove(event) {
     mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
@@ -82,17 +111,31 @@ function collide() {
 function paddleCollision(paddle, ball){
 	let p = new THREE.Box3().setFromObject(paddle);
 	let b = new THREE.Box3().setFromObject(ball);
-	let col = p.isIntersectionBox(b);
+	let col = p.intersectsBox(b);
 	if(col){
 		ball_vx *= -1;
 	}
 }
 
+function keyboardMovement(){
+    if(left_up){
+        left_paddle.translateY(0.2);
+    }
+    if(left_down){
+        left_paddle.translateY(-0.2);
+    }
+    if(right_up){
+        right_paddle.translateY(0.2);
+    }
+    if(right_down){
+        right_paddle.translateY(-0.2);
+    }
+}
+
 function update() {
     t = performance.now()/1000;
     collide();
-    left_paddle.translateY(0.09*Math.cos(t));
-    right_paddle.translateY(0.09*Math.cos(t+5));
+    keyboardMovement();
     ball.translateX(0.05*ball_vx);
     ball.translateY(0.05*ball_vy);
 }
