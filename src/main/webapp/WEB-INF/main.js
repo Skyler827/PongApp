@@ -23,25 +23,30 @@ var x = 10,
 
 function init() {
     scene = new THREE.Scene();
-    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, 0.1, 1000 );
-    directionalLight = new THREE.DirectionalLight( 0xffffff, 0.5 );
+    camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 1000 );
+    // camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
+    directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
     scene.add( directionalLight );
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
     document.querySelector("#canvas_container").appendChild( renderer.domElement );
 
-    camera.position.set( 0, 1, 12 );
-    camera.lookAt( 0, 0, 0 );
+    camera.position.set( 0, 0, 12);
+    camera.lookAt( 0, 0, 0);
     bg_light = new THREE.AmbientLight( 0x404040, 2 ); // soft white light
     scene.add( bg_light);
-    point_light = new THREE.PointLight(0x666666,4,1000);
-    point_light.translateZ(40);
+    point_light = new THREE.PointLight(0x666666, 3, 0);
+    point_light.translateZ(-10);
     scene.add(point_light);
 
-    left_paddle_geo = new THREE.BoxGeometry( 1, 3, 1 );
+    left_paddle_geo = new THREE.BoxGeometry( 0.5, 3, 1 );
+
+    // Texture wrapping for left paddle
+    var paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg")
+    paddleTexture.minFilter = THREE.LinearFilter;
     white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
-    left_paddle = new THREE.Mesh( left_paddle_geo, white_material);
+    left_paddle = new THREE.Mesh(left_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture}));
     left_paddle.translateX(-10);
     scene.add(left_paddle);
 
@@ -55,15 +60,19 @@ function init() {
     scene.add(left_paddle_mouse_grabber);
 
     right_paddle_geo= new THREE.BoxGeometry( 1, 3, 1 );
-    right_paddle = new THREE.Mesh( right_paddle_geo, white_material);
+    right_paddle = new THREE.Mesh(right_paddle_geo, white_material);
     right_paddle.translateX(10);
     right_paddle.translateY(-3);
     scene.add(right_paddle);
 
-    background_geo = new THREE.BoxGeometry(80, 80, 1);
-    wall_mesh = new THREE.MeshStandardMaterial({color: 0x333333});
-    background_wall = new THREE.Mesh(background_geo, wall_mesh);
-    background_wall.translateZ(-1);
+    var texture, material;
+
+    texture = new THREE.TextureLoader().load("/img/universe1.jpg")
+    texture.minFilter = THREE.LinearFilter;
+    material = new THREE.MeshBasicMaterial({ map : texture });
+    background_geo = new THREE.BoxGeometry(60, 30, 1);
+    background_wall = new THREE.Mesh(background_geo, material);
+    background_wall.translateZ(-5);
     scene.add(background_wall);
 
     ball_geo = new THREE.SphereGeometry(0.4);
@@ -73,9 +82,10 @@ function init() {
     ball_vx = 4;
     ball_vy = 1;
 
-    midline_geo= new THREE.BoxGeometry(.1,30,1);
+    // Center line
+    midline_geo= new THREE.BoxGeometry(.2, 30, -1);
     middle_line = new THREE.Mesh(midline_geo, white_material);
-    middle_line.translateZ(-.5);
+    middle_line.translateZ(-1);
     scene.add(middle_line);
 
     t = 0;
@@ -162,6 +172,7 @@ function update() {
         }
     }
 
+    // Paddle position constraint
     paddle_velY *= friction;
     if(paddle_velY > 0){
         if(left_paddle.position.y <= 5){
@@ -196,6 +207,10 @@ function update() {
 
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
+    console.log(e.keyCode);
+    if (e.keyCode == 32 && paused == true) {
+        resumeGame();
+    }
 });
 document.body.addEventListener("keyup", function (e) {
     keys[e.keyCode] = false;
