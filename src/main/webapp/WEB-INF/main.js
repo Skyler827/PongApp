@@ -147,6 +147,12 @@ function resumeGame() {
     document.querySelector("#resume-anchor").style.display = "none";
     animate();
 }
+function computeNextCollision() {
+
+}
+function computerMove() {
+
+}
 function update() {
     t = performance.now()/1000;
     collide();
@@ -203,6 +209,7 @@ function update() {
         returnBall();
         pauseGame();
     }
+    right_paddle.position.y = ball.position.y;
 }
 
 
