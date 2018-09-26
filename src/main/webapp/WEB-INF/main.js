@@ -118,20 +118,6 @@ function paddleCollision(paddle, ball){
 	}
 }
 
-function keyboardMovement(){
-    if(left_up){
-        left_paddle.translateY(0.2);
-    }
-    if(left_down){
-        left_paddle.translateY(-0.2);
-    }
-    if(right_up){
-        right_paddle.translateY(0.2);
-    }
-    if(right_down){
-        right_paddle.translateY(-0.2);
-    }
-}
 function returnBall() {
     ball.position.x = 0;
     ball.position.y = 0;
@@ -150,9 +136,6 @@ function resumeGame() {
 function update() {
     t = performance.now()/1000;
     collide();
-    // keyboardMovement();
-    // left_paddle.translateY(0.09*Math.cos(t));
-    // right_paddle.translateY(0.1*Math.cos(t+5));
     if (keys[38]) {
         if (velY > -speed) {
             velY += accel;
