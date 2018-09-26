@@ -7,7 +7,8 @@ var frame_geo, frame_mesh, frame;
 var t, previous_t, dt;
 var mouse;
 var gridHelper;
-var objects = [];
+var left_paddle_mouse_grabber;
+var arr_mouse_grabber;
 
 function init() {
     scene = new THREE.Scene();
@@ -33,6 +34,15 @@ function init() {
     left_paddle = new THREE.Mesh( left_paddle_geo, red_material);
     left_paddle.translateX(-10);
     scene.add(left_paddle);
+
+    left_paddle_mouse_grabber_geo = new THREE.BoxGeometry(4,12,1);
+    left_paddle_mouse_grabber_material = new THREE.MeshBasicMaterial({
+        color: 0x248f24, alphaTest: 0, visible: false})
+    left_paddle_mouse_grabber = new THREE.Mesh(
+        left_paddle_mouse_grabber_geo,left_paddle_mouse_grabber_material);
+    left_paddle_mouse_grabber.translateX(-10);
+    // left_paddle_mouse_grabber.translateY(+2);
+    scene.add(left_paddle_mouse_grabber);
 
     right_paddle_geo= new THREE.BoxGeometry( 1, 3, 1 );
     right_paddle = new THREE.Mesh( right_paddle_geo, red_material);
@@ -63,6 +73,7 @@ function init() {
     document.addEventListener( 'mousemove', onDocumentMouseMove, false );
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
+
     // gridHelper = new THREE.GridHelper( 20, 20 );
 
     // gridHelper.rotateX(3.14159/2);
@@ -74,8 +85,10 @@ function onDocumentMouseMove(event) {
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
-    var intersects = raycaster.intersectObjects(objects);
-    console.log(intersects);
+    var intersects = raycaster.intersectObject(left_paddle_mouse_grabber);
+    if (intersects.length > 0) {
+        left_paddle.position.y = intersects[0].point.y;
+    }
 }
 function collide() {
 	//Checking both paddles, could be limited with direction of ball velocity
@@ -93,7 +106,7 @@ function collide() {
 function paddleCollision(paddle, ball){
 	let p = new THREE.Box3().setFromObject(paddle);
 	let b = new THREE.Box3().setFromObject(ball);
-	let col = p.isIntersectionBox(b);
+	let col = p.intersectsBox(b);
 	if(col){
 		ball_vx *= -1;
 	}
@@ -102,8 +115,8 @@ function paddleCollision(paddle, ball){
 function update() {
     t = performance.now()/1000;
     collide();
-    left_paddle.translateY(0.09*Math.cos(t));
-    right_paddle.translateY(0.09*Math.cos(t+5));
+    // left_paddle.translateY(0.09*Math.cos(t));
+    right_paddle.translateY(0.1*Math.cos(t+5));
     ball.translateX(0.05*ball_vx);
     ball.translateY(0.05*ball_vy);
 }
