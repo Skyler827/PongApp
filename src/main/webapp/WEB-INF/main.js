@@ -1,9 +1,9 @@
 var scene, camera, directionalLight, renderer, bg_light, point_light;
-var left_paddle_geo, red_material, left_paddle;
+var left_paddle_geo, white_material, left_paddle;
 var right_paddle_geo, right_paddle;
 var background_geo, wall_mesh, background_wall;
 var ball_geo, ball_mesh, ball, ball_vx, ball_vy;
-var frame_geo, frame_mesh, frame;
+var frame_geo, frame_mesh, middle_line;
 var t, previous_t, dt;
 var mouse;
 var left_up, left_down, right_up, right_down;
@@ -36,13 +36,12 @@ function init() {
     bg_light = new THREE.AmbientLight( 0x404040, 2 ); // soft white light
     scene.add( bg_light);
     point_light = new THREE.PointLight(0x666666,4,1000);
-    point_light.translateZ(10);
-    point_light.translateY(3);
+    point_light.translateZ(40);
     scene.add(point_light);
 
     left_paddle_geo = new THREE.BoxGeometry( 1, 3, 1 );
-    red_material = new THREE.MeshStandardMaterial( { color: 0xff0000 } );
-    left_paddle = new THREE.Mesh( left_paddle_geo, red_material);
+    white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
+    left_paddle = new THREE.Mesh( left_paddle_geo, white_material);
     left_paddle.translateX(-10);
     scene.add(left_paddle);
 
@@ -56,30 +55,29 @@ function init() {
     scene.add(left_paddle_mouse_grabber);
 
     right_paddle_geo= new THREE.BoxGeometry( 1, 3, 1 );
-    right_paddle = new THREE.Mesh( right_paddle_geo, red_material);
+    right_paddle = new THREE.Mesh( right_paddle_geo, white_material);
     right_paddle.translateX(10);
     right_paddle.translateY(-3);
     scene.add(right_paddle);
 
-    background_geo = new THREE.BoxGeometry(20, 10, 1);
+    background_geo = new THREE.BoxGeometry(80, 80, 1);
     wall_mesh = new THREE.MeshStandardMaterial({color: 0x333333});
     background_wall = new THREE.Mesh(background_geo, wall_mesh);
     background_wall.translateZ(-1);
     scene.add(background_wall);
 
     ball_geo = new THREE.SphereGeometry(0.4);
-    ball_mesh = new THREE.MeshStandardMaterial({color:0x11BB22});
+    ball_mesh = new THREE.MeshStandardMaterial({color:0xff0000});
     ball = new THREE.Mesh(ball_geo, ball_mesh);
     scene.add(ball);
     ball_vx = 4;
     ball_vy = 1;
-    frame_geo = new THREE.RingGeometry(10,11,4,1,3.14159*0.25,6.285);
-    frame_mesh = new THREE.MeshStandardMaterial({color:0x22DD33});
-    frame = new THREE.Mesh(frame_geo, frame_mesh);
-    frame.translateZ(-0.45);
-    frame.scale.x  = 1.3;
-    frame.scale.y = 0.75;
-    scene.add(frame);
+
+    midline_geo= new THREE.BoxGeometry(.1,30,1);
+    middle_line = new THREE.Mesh(midline_geo, white_material);
+    middle_line.translateZ(-.5);
+    scene.add(middle_line);
+
     t = 0;
     left_up = false; left_down = false; right_up = false; right_down = false;
     mouse = new THREE.Vector2();
@@ -170,7 +168,7 @@ function update() {
     }
     velX *= friction;
     if(velX > 0){
-        if(left_paddle.position.x <= 0){
+        if(left_paddle.position.x <= -2){
             left_paddle.translateX(velX);
         }
     }else{
