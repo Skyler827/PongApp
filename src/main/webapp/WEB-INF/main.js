@@ -43,7 +43,7 @@ function init() {
     left_paddle_geo = new THREE.BoxGeometry( 0.5, 3, 1 );
 
     // Texture wrapping for left paddle
-    var paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg")
+    var paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg");
     paddleTexture.minFilter = THREE.LinearFilter;
     white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
     left_paddle = new THREE.Mesh(left_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture}));
@@ -52,7 +52,7 @@ function init() {
 
     left_paddle_mouse_grabber_geo = new THREE.BoxGeometry(4,12,0.8);
     left_paddle_mouse_grabber_material = new THREE.MeshBasicMaterial({
-        color: 0x248f24, alphaTest: 0, visible: false})
+        color: 0x248f24, alphaTest: 0, visible: false});
     left_paddle_mouse_grabber = new THREE.Mesh(
         left_paddle_mouse_grabber_geo,left_paddle_mouse_grabber_material);
     left_paddle_mouse_grabber.translateX(-10);
@@ -208,7 +208,7 @@ function update() {
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
     console.log(e.keyCode);
-    if (e.keyCode == 32 && paused == true) {
+    if (e.keyCode === 32 && paused === true) {
         resumeGame();
     }
 });
