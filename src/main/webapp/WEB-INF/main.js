@@ -10,6 +10,7 @@ var left_up, left_down, right_up, right_down;
 var gridHelper;
 var left_paddle_mouse_grabber;
 var arr_mouse_grabber;
+var paused = false;
 
 var x = 10,
     y = 5,
@@ -28,7 +29,7 @@ function init() {
 
     renderer = new THREE.WebGLRenderer();
     renderer.setSize( window.innerWidth, window.innerHeight );
-    document.body.appendChild( renderer.domElement );
+    document.querySelector("#canvas_container").appendChild( renderer.domElement );
 
     camera.position.set( 0, 1, 12 );
     camera.lookAt( 0, 0, 0 );
@@ -45,7 +46,7 @@ function init() {
     left_paddle.translateX(-10);
     scene.add(left_paddle);
 
-    left_paddle_mouse_grabber_geo = new THREE.BoxGeometry(4,12,1);
+    left_paddle_mouse_grabber_geo = new THREE.BoxGeometry(4,12,0.8);
     left_paddle_mouse_grabber_material = new THREE.MeshBasicMaterial({
         color: 0x248f24, alphaTest: 0, visible: false})
     left_paddle_mouse_grabber = new THREE.Mesh(
@@ -86,7 +87,7 @@ function init() {
 }
 
 function onDocumentMouseMove(event) {
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+    mouse.x = ( (event.clientX) / (window.innerWidth) ) * 2 - 1;
     mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
     raycaster.setFromCamera(mouse, camera);
@@ -131,7 +132,21 @@ function keyboardMovement(){
         right_paddle.translateY(-0.2);
     }
 }
-
+function returnBall() {
+    ball.position.x = 0;
+    ball.position.y = 0;
+}
+function pauseGame() {
+    paused = true;
+    document.querySelector("#pause-anchor").style.display = "none";
+    document.querySelector("#resume-anchor").style.display = "inline";
+}
+function resumeGame() {
+    paused = false;
+    document.querySelector("#pause-anchor").style.display = "inline";
+    document.querySelector("#resume-anchor").style.display = "none";
+    animate();
+}
 function update() {
     t = performance.now()/1000;
     collide();
@@ -184,6 +199,10 @@ function update() {
 
     ball.translateX(0.05*ball_vx);
     ball.translateY(0.05*ball_vy);
+    if (Math.abs(ball.position.x)>20) {
+        returnBall();
+        pauseGame();
+    }
 }
 
 document.body.addEventListener("keydown", function (e) {
@@ -195,6 +214,7 @@ document.body.addEventListener("keyup", function (e) {
 
 function animate() {
     update();
+    if (paused) {return;}
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 }
