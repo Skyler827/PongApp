@@ -5,9 +5,38 @@
     <title>Pong App: Game</title>
     <style>
         body {margin:0; background-color: black;overflow:hidden}
+        #content-container {
+            position: absolute;
+            z-index:5;
+            vertical-align: top;
+        }
+        h1 {
+            color: white;
+            text-align: center;
+        }
+        #sidebar {
+            width: 300px;
+            background-color: lightblue;
+        }
+        #canvas_container {
+            position: absolute;
+        }
+        #resume-anchor {
+            display: none;
+        }
     </style>
 </head>
 <body>
+    <div id="content-container">
+        <h1>Super cool Pong App</h1>            
+        <div id="sidebar">
+            <ul>
+                <li><a id="pause-anchor" href="#" onclick="pauseGame()">Pause Game</a></li>
+                <li><a id="resume-anchor" href="#" onclick="resumeGame()">Resume Game</a></li>
+            </ul>
+        </div>
+    </div>
+    <div id="canvas_container"></div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/96/three.js"></script>
     <script src="main.js"></script>
 </body>
