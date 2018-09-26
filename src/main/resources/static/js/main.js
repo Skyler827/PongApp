@@ -24,7 +24,6 @@ var x = 10,
 function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 1000 );
-    // camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
     directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
     scene.add( directionalLight );
 
@@ -65,8 +64,8 @@ function init() {
     right_paddle.translateY(-3);
     scene.add(right_paddle);
 
+    // Creation of background geometry
     var texture, material;
-
     texture = new THREE.TextureLoader().load("/img/universe1.jpg")
     texture.minFilter = THREE.LinearFilter;
     material = new THREE.MeshBasicMaterial({ map : texture });
