@@ -11,8 +11,6 @@ var gridHelper;
 var left_paddle_mouse_grabber;
 var arr_mouse_grabber;
 var paused = false;
-var topM = false, bottom = false, left = false, right = false;
-var stompClient = null;
 
 var x = 10,
     y = 5,
@@ -23,7 +21,7 @@ var x = 10,
     friction = .95,
     keys = [];
 
-function init(callback) {
+function init() {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 1000 );
     // camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
@@ -89,24 +87,11 @@ function init(callback) {
     middle_line = new THREE.Mesh(midline_geo, white_material);
     middle_line.translateZ(-1);
     scene.add(middle_line);
-    
+
     t = 0;
     left_up = false; left_down = false; right_up = false; right_down = false;
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
-    connect(callback);
-}
-
-function connect(callback){
-    var socket = new SockJS("/ourGame");
-    stompClient = Stomp.over(socket);
-    stompClient.connect({}, function (frame){
-        console.log('Connected: ' + frame);
-        stompClient.subscribe("/topic/thisGame", function (movement){
-            console.log((movement));
-        });
-        callback();
-    });
 }
 
 function onDocumentMouseMove(event) {
@@ -124,6 +109,7 @@ function collide() {
 	//Could also be checked if the ball is close to the a paddle
     paddleCollision(left_paddle, ball);
     paddleCollision(right_paddle, ball);
+
     
     var next_y = ball.position.y + ball_vy*0.05;
     if (5 < next_y || next_y < -5) {
@@ -137,13 +123,15 @@ function paddleCollision(paddle, ball){
 	let b = new THREE.Box3().setFromObject(ball);
 	let col = p.intersectsBox(b);
 	if(col){
-		ball_vx *= -1;
+        ball_vx *= -1;
+        playSoundOnce('/img/ping.mp3');
 	}
 }
 
 function returnBall() {
     ball.position.x = 0;
     ball.position.y = 0;
+    playSoundOnce('/img/out.mp3');
 }
 function pauseGame() {
     paused = true;
@@ -165,8 +153,6 @@ function computerMove() {
 function update() {
     t = performance.now()/1000;
     collide();
-    let tempMovement = {"top":topM+"", "bottom":bottom+"", "left":left+"", "right":right+""};
-    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
     if (keys[38]) {
         if (paddle_velY > -speed) {
             paddle_velY += accel;
@@ -221,25 +207,16 @@ function update() {
     right_paddle.position.y = ball.position.y;
 }
 
+
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
-
-    if(e.keyCode == 38) topM = true;
-    if(e.keyCode == 40) bottom = true;
-    if(e.keyCode == 37) left = true;
-    if(e.keyCode == 39) right = true;
-    
+    console.log(e.keyCode);
     if (e.keyCode === 32 && paused === true) {
         resumeGame();
-    }
+        }
 });
 document.body.addEventListener("keyup", function (e) {
     keys[e.keyCode] = false;
-
-    if(e.keyCode == 38) topM = false;
-    if(e.keyCode == 40) bottom = false;
-    if(e.keyCode == 37) left = false;
-    if(e.keyCode == 39) right = false;
 });
 
 function animate() {
@@ -249,4 +226,20 @@ function animate() {
     renderer.render( scene, camera );
 }
 
-init(animate);
+function sound() {
+    myAudio = new Audio('/img/audio.mp3'); 
+myAudio.addEventListener('ended', function() {
+    this.currentTime = 0;
+    this.play();
+}, false);
+myAudio.play();
+}
+
+function playSoundOnce(path) {
+    bgSound = new Audio(path);
+    bgSound.play(); 
+}
+
+
+init();
+animate();
