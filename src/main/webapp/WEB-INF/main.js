@@ -173,6 +173,10 @@ function update() {
     // right_paddle.translateY(0.1*Math.cos(t+5));
     ball.translateX(0.05*ball_vx);
     ball.translateY(0.05*ball_vy);
+    if (Math.abs(ball.position.x)>20) {
+        returnBall();
+        pauseGame();
+    }
 }
 function animate() {
     update();
