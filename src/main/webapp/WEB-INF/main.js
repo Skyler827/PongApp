@@ -14,8 +14,8 @@ var paused = false;
 
 var x = 10,
     y = 5,
-    velY = 0,
-    velX = 0,
+    paddle_velY = 0,
+    paddle_velX = 0,
     speed = .5,
     accel = .02,
     friction = .95,
@@ -131,49 +131,55 @@ function resumeGame() {
     document.querySelector("#resume-anchor").style.display = "none";
     animate();
 }
+function computeNextCollision() {
+
+}
+function computerMove() {
+
+}
 function update() {
     t = performance.now()/1000;
     collide();
     if (keys[38]) {
-        if (velY > -speed) {
-            velY += accel;
+        if (paddle_velY > -speed) {
+            paddle_velY += accel;
         }
     }
     
     if (keys[40]) {
-        if (velY < speed) {
-            velY -= accel;
+        if (paddle_velY < speed) {
+            paddle_velY -= accel;
         }
     }
     if (keys[39]) {
-        if (velX < speed) {
-            velX += accel;
+        if (paddle_velX < speed) {
+            paddle_velX += accel;
         }
     }
     if (keys[37]) {
-        if (velX > -speed) {
-            velX -= accel;
+        if (paddle_velX > -speed) {
+            paddle_velX -= accel;
         }
     }
 
-    velY *= friction;
-    if(velY > 0){
+    paddle_velY *= friction;
+    if(paddle_velY > 0){
         if(left_paddle.position.y <= 5){
-            left_paddle.translateY(velY);
+            left_paddle.translateY(paddle_velY);
         }
     }else{
         if(left_paddle.position.y >= -5){
-            left_paddle.translateY(velY);
+            left_paddle.translateY(paddle_velY);
         }
     }
-    velX *= friction;
-    if(velX > 0){
-        if(left_paddle.position.x <= -2){
-            left_paddle.translateX(velX);
+    paddle_velX *= friction;
+    if(paddle_velX > 0){
+        if(left_paddle.position.x <= 0){
+            left_paddle.translateX(paddle_velX);
         }
     }else{
         if(left_paddle.position.x >= -10){
-            left_paddle.translateX(velX);
+            left_paddle.translateX(paddle_velX);
         }
     }
 
@@ -184,7 +190,9 @@ function update() {
         returnBall();
         pauseGame();
     }
+    right_paddle.position.y = ball.position.y;
 }
+
 
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
