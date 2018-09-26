@@ -43,9 +43,6 @@
 <body>
     <div class="container-fluid">
         <div class="signup">
-			<c:if test="${logoutMessage != null}">
-				<p class="error mt-3">${logoutMessage}</p>
-			</c:if>
 			<h1>Register</h1>
 
             <form:form action="/register" method="post" modelAttribute="user">
@@ -75,7 +72,10 @@
             </form:form>
         </div>
         <div class="login">
-            <h1>Log In</h1>
+			<c:if test="${logoutMessage != null}">
+				<p class="error mt-3">${logoutMessage}</p>
+			</c:if>
+			<h1>Log In</h1>
 
 			<form action='/login' method='post'>
             <p class="error"><c:out value="${error}"/></p>                  
