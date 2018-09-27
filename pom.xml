@@ -88,11 +88,6 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		<dependency>
-		<groupId>org.dyn4j</groupId>
-		<artifactId>dyn4j</artifactId>
-		<version>3.3.0</version>
-	</dependency>
 
 	</dependencies>
 

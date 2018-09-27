@@ -11,7 +11,7 @@ var gridHelper;
 var left_paddle_mouse_grabber;
 var arr_mouse_grabber;
 var paused = false;
-var topM = false, bottom = false, left = false, right = false;
+var topM = false, bottom = false;
 var stompClient = null;
 
 var paddle_velY = 0,
@@ -24,7 +24,6 @@ var paddle_velY = 0,
 function init(callback) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 1000 );
-    // camera = new THREE.OrthographicCamera( width / - 2, width / 2, height / 2, height / - 2, 1, 1000 );
     directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
     scene.add( directionalLight );
 
@@ -47,7 +46,7 @@ function init(callback) {
     paddleTexture.minFilter = THREE.LinearFilter;
     white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
     left_paddle = new THREE.Mesh(left_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture}));
-    left_paddle.translateX(-10);
+    left_paddle.translateX(-15);
     scene.add(left_paddle);
 
     left_paddle_mouse_grabber_geo = new THREE.BoxGeometry(4,12,0.8);
@@ -65,8 +64,8 @@ function init(callback) {
     right_paddle.translateY(-3);
     scene.add(right_paddle);
 
+    // Creation of background geometry
     var texture, material;
-
     texture = new THREE.TextureLoader().load("/img/universe1.jpg")
     texture.minFilter = THREE.LinearFilter;
     material = new THREE.MeshBasicMaterial({ map : texture });
@@ -80,7 +79,7 @@ function init(callback) {
     ball = new THREE.Mesh(ball_geo, ball_mesh);
     scene.add(ball);
     ball_vx = 4;
-    ball_vy = 1;
+    ball_vy = 0;
 
     // Center line
     midline_geo= new THREE.BoxGeometry(.2, 30, -1);
@@ -120,23 +119,52 @@ function onDocumentMouseMove(event) {
 function collide() {
 	//Checking both paddles, could be limited with direction of ball velocity
 	//Could also be checked if the ball is close to the a paddle
-    paddleCollision(left_paddle, ball);
-    paddleCollision(right_paddle, ball);
+    paddleCollision(left_paddle, ball, "left");
+    paddleCollision(right_paddle, ball, "right");
     
-    var next_y = ball.position.y + ball_vy*0.05;
-    if (5 < next_y || next_y < -5) {
+    var next_y = ball.position.y + ball_vy;
+    if (8 < next_y || next_y < -8) {
         ball_vy *= -1;
     }
 }
 
-//Checks if the paddle passed in is in collision with the ball
-function paddleCollision(paddle, ball){
-	let p = new THREE.Box3().setFromObject(paddle);
+//Checks if the paddle passed in is in collision with the ball. Only detect collision once per side to avoid ball being hit multiple times
+var leftPlayerHit, rightPlayerHit
+var count = 0;
+function paddleCollision(paddle, ball, player){
+    let p = new THREE.Box3().setFromObject(paddle);
+    // p.expandByVector(new THREE.Vector3(10,0,0)); 
 	let b = new THREE.Box3().setFromObject(ball);
-	let col = p.intersectsBox(b);
-	if(col){
-		ball_vx *= -1;
-	}
+    let col = b.intersectsBox(p);
+     
+    if(player == "left"){
+        if(col && !leftPlayerHit){
+            leftPlayerHit = true;
+            rightPlayerHit = false;
+            let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
+            let distanceFromCenter = hitPoint.y - paddle.position.y;
+            ball_vx*=-1;
+            if(Math.abs(ball_vx) < 28){
+                ball_vx *= 1.05;
+            }
+            ball_vy = 0.1*distanceFromCenter;
+            count++;
+        }
+    }
+    if(player == "right"){
+        if(col && !rightPlayerHit){
+            rightPlayerHit = true;
+            leftPlayerHit = false;
+            let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
+            let distanceFromCenter = hitPoint.y - paddle.position.y;
+            ball_vx*=-1;
+            if(Math.abs(ball_vx) < 28){
+                ball_vx *= 1.05;
+            }
+            ball_vy = 0.1*distanceFromCenter;
+            count++;
+        }
+    }
 }
 
 function returnBall() {
@@ -159,6 +187,9 @@ function computeNextCollision() {
 }
 function computerMove(movement) {
     movement = JSON.parse(movement["body"]);
+
+    console.log(movement);
+
     if (movement["top"]) {
         if (paddle_velY > -speed) {
             paddle_velY += accel;
@@ -170,50 +201,33 @@ function computerMove(movement) {
             paddle_velY -= accel;
         }
     }
-    if (movement["right"]) {
-        if (paddle_velX < speed) {
-            paddle_velX += accel;
-        }
-    }
-    if (movement["left"]) {
-        if (paddle_velX > -speed) {
-            paddle_velX -= accel;
-        }
-    }
 
-    // Paddle position constraint
+    // Paddle movement and position constraint
     paddle_velY *= friction;
     if(paddle_velY > 0){
-        if(left_paddle.position.y <= 5){
+        if(left_paddle.position.y <= 8){
             left_paddle.translateY(paddle_velY);
         }
     }else{
-        if(left_paddle.position.y >= -5){
+        if(left_paddle.position.y >= -8){
             left_paddle.translateY(paddle_velY);
         }
     }
-    paddle_velX *= friction;
-    if(paddle_velX > 0){
-        if(left_paddle.position.x <= -3){
-            left_paddle.translateX(paddle_velX);
         }
-    }else{
-        if(left_paddle.position.x >= -10){
-            left_paddle.translateX(paddle_velX);
-        }
-    }
-}
 function update() {
     t = performance.now()/1000;
     collide();
-    let tempMovement = {"top":topM+"", "bottom":bottom+"", "left":left+"", "right":right+""};
-    // stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
-
+    let tempMovement = {"top":topM+"", "bottom":bottom};
+    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
 
 
     ball.translateX(0.05*ball_vx);
-    ball.translateY(0.05*ball_vy);
+    ball.translateY(ball_vy);
     if (Math.abs(ball.position.x)>20) {
+        ball_vx = 4;
+        ball_vy = 0;
+        leftPlayerHit = false;
+        rightPlayerHit = false;
         returnBall();
         pauseGame();
     }
@@ -221,24 +235,16 @@ function update() {
 }
 
 document.body.addEventListener("keydown", function (e) {
-    keys[e.keyCode] = true;
-
     if(e.keyCode === 38) topM = true;
     if(e.keyCode === 40) bottom = true;
-    if(e.keyCode === 37) left = true;
-    if(e.keyCode === 39) right = true;
-    
-    if (e.keyCode === 32 && paused === true) {
+
+    if(e.keyCode === 32 && paused){
         resumeGame();
     }
 });
 document.body.addEventListener("keyup", function (e) {
-    keys[e.keyCode] = false;
-
     if(e.keyCode === 38) topM = false;
     if(e.keyCode === 40) bottom = false;
-    if(e.keyCode === 37) left = false;
-    if(e.keyCode === 39) right = false;
 });
 
 function animate() {

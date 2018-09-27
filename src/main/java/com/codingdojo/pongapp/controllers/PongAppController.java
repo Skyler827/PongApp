@@ -42,6 +42,7 @@ public class PongAppController {
 	private UserValidator userValidator;
 	@Autowired
 	private RoleRepository roleRepository;
+	private PongGame pongGame = new PongGame();
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
 		if(roleRepository.findByName("ROLE_USER") == null) {
@@ -96,6 +97,8 @@ public class PongAppController {
 	@MessageMapping("/myMovements")
 	@SendTo("/topic/thisGame")
 	public ClientKeyEventMessage keyM(ClientKeyEventMessage message) throws Exception{
+	    pongGame.handleKeyEvent(message);
+	    System.out.println(pongGame.getStatus());
 		return message;
 	}
 
