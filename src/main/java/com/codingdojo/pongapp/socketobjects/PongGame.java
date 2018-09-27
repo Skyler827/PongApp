@@ -1,47 +1,42 @@
 package com.codingdojo.pongapp.socketobjects;
 
-import org.dyn4j.collision.AxisAlignedBounds;
-import org.dyn4j.collision.Bounds;
-import org.dyn4j.dynamics.Body;
-import org.dyn4j.dynamics.BodyFixture;
-import org.dyn4j.dynamics.World;
-import org.dyn4j.geometry.Rectangle;
-import org.dyn4j.geometry.Circle;
 public class PongGame {
-    Bounds bounds;
-    World world;
-    Rectangle r;
-    Circle c;
-    BodyFixture lp_bf;
-    Body lp_body;
-    BodyFixture rp_bf;
-    Body rp_body;
-    
-
+    Ball b;
+    Paddle leftPaddle;
+    Paddle rightPaddle;
     public PongGame() {
-        bounds = new AxisAlignedBounds(40,20);
-        world = new World(bounds);
-        r = new Rectangle(1,3);
-        c = new Circle(0.5);
-
-        // left paddle:
-        lp_bf = new BodyFixture(r);
-        lp_bf.setFriction(1.3);
-        lp_body = new Body(1);
-        lp_body.addFixture(lp_bf);
-
-        //right paddle:
-        rp_bf = new BodyFixture(r);
-        lp_bf.setFriction(1.3);
-        rp_body = new Body(1);
-        rp_body.addFixture(lp_bf);
-
-        //ball:
-
-        ball_bf = new BodyFixture(c);
-
-        world.addBody(lp_body);
-        world.addBody(rp_body);
-
+        b = new Ball(0,0);
+        leftPaddle = new PlayerPaddle(-10, 0, -10,-10);
+        rightPaddle = new ComputerPaddle(10, 0, 10,10);
+    }
+    void move(float dt) {
+        handleCollision(b, leftPaddle);
+        handleCollision(b, rightPaddle);
+        b.timeStep(dt);
+        leftPaddle.timeStep(dt);
+        rightPaddle.timeStep(dt);
+    }
+    static void handleCollision(Ball b, Paddle p) {
+        float horizontalDisplacement = b.x-p.x_center;
+        float verticalDisplacement = b.y-p.y_center;
+        boolean horizontalCondition = horizontalDisplacement < p.width/2 + b.radius;
+        boolean verticalCondition = verticalDisplacement<p.height/2 + b.radius;
+        if (horizontalCondition) {
+            if (verticalCondition) {
+                //collision:
+                if (horizontalDisplacement > 0) b.vx = 1;
+                else b.vx = -1;
+                b.vy = verticalDisplacement;
+            }
+        }
+    }
+    public String getStatus() {
+        return "Pong game: Left Paddle: "+leftPaddle.getStatus()
+                +", Right Paddle: " + rightPaddle.getStatus()
+                +", Ball: "+b.getStatus();
+    }
+    public void handleKeyEvent(ClientKeyEventMessage kem) {
+        leftPaddle.downKeyPressed = kem.getBottom();
+        leftPaddle.upKeyPressed = kem.getTop();
     }
 }
