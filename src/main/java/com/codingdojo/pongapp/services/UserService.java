@@ -46,6 +46,9 @@ public class UserService {
     	User user = userRepository.findByRoles(role);
     	if(user == null) { return false; }
     	else { return true; }
-    }
+	}
+	public List<User> findAll() {
+		return userRepository.findAll();
+	}
     
 }

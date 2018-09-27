@@ -13,6 +13,7 @@ var arr_mouse_grabber;
 var paused = false;
 var topM = false, bottom = false;
 var stompClient = null;
+var myAudio = new Audio();
 
 var paddle_velY = 0,
     paddle_velX = 0,
@@ -138,12 +139,12 @@ function paddleCollision(paddle, ball, player){
     // p.expandByVector(new THREE.Vector3(10,0,0)); 
 	let b = new THREE.Box3().setFromObject(ball);
     let col = b.intersectsBox(p);
-     
+    
     if(player == "left"){
         if(col && !leftPlayerHit){
             leftPlayerHit = true;
             rightPlayerHit = false;
-            playSoundOnce('/sound/ping.mp3');
+            playSoundOnce('/sound/dding.mp3');
             let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
             let distanceFromCenter = hitPoint.y - paddle.position.y;
             ball_vx*=-1;
@@ -153,12 +154,13 @@ function paddleCollision(paddle, ball, player){
             ball_vy = 0.2*distanceFromCenter;
             count++;
         }
+
     }
     if(player == "right"){
         if(col && !rightPlayerHit){
             rightPlayerHit = true;
             leftPlayerHit = false;
-            playSoundOnce('/sound/ding.mp3');
+            playSoundOnce('/sound/ddingother.mp3');
             let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
             let distanceFromCenter = hitPoint.y - paddle.position.y;
             ball_vx*=-1;
@@ -171,6 +173,13 @@ function paddleCollision(paddle, ball, player){
     }
 }
 
+var runOnce;
+function deathMatch(){
+    if (ball_vx > 20 && !runOnce){
+        runOnce = true;
+        sound('/sound/deathmatch.wav');
+    }
+}
 function returnBall() {
     ball.position.x = 0;
     ball.position.y = 0;
@@ -185,6 +194,7 @@ function resumeGame() {
     paused = false;
     document.querySelector("#pause-anchor").style.display = "inline";
     document.querySelector("#resume-anchor").style.display = "none";
+    sound('/sound/normalmusic.wav');
     animate();
 }
 function computeNextCollision() {
@@ -221,6 +231,7 @@ function computerMove(movement) {
         }
 function update() {
     t = performance.now()/1000;
+    deathMatch();
     collide();
     let tempMovement = {"top":topM+"", "bottom":bottom};
     stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
@@ -233,6 +244,8 @@ function update() {
         ball_vy = 0;
         leftPlayerHit = false;
         rightPlayerHit = false;
+        runOnce = false;
+        myAudio.pause();
         returnBall();
         pauseGame();
     }
@@ -258,15 +271,16 @@ function animate() {
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 }
-function sound() {
-    myAudio = new Audio('/sound/audio.mp3'); 
-myAudio.addEventListener('ended', function() {
+function sound(path) {
+    myAudio.src = path;
+    myAudio.addEventListener('ended', function() {
     this.currentTime = 0;
     this.play();
-}, false);
-myAudio.play();
+    }, false);
+
+    myAudio.play();
 }
- function playSoundOnce(path) {
+function playSoundOnce(path) {
     bgSound = new Audio(path);
     bgSound.play(); 
 }

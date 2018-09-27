@@ -1,27 +1,27 @@
 <nav>
   <ul>
     <li>
-      <a routerLink="">
-        <i class="material-icons">reorder</i>
-      </a>
+        <a routerLink="full">
+          <i class="material-icons">reorder</i>
+        </a>
     </li>
     <li>
-        <a routerLink="posts">
+        <a routerLink="home">
           <i class="material-icons">supervised_user_circle</i>
         </a>
       </li>
     <li>
-        <a routerLink="posts">
+        <a [routerLink]="['/home', {outlets: {'left': ['A']}}]">
           <i class="material-icons">supervised_user_circle</i>
         </a>
       </li>
     <li>
-        <a routerLink="posts">
+        <a [routerLink]="['/home', {outlets: {'left': ['B']}}]">
           <i class="material-icons">supervised_user_circle</i>
         </a>
       </li>
     <li>
-        <a routerLink="posts">
+        <a [routerLink]="['/home', {outlets: {'left': ['C']}}]">
           <i class="material-icons">supervised_user_circle</i>
         </a>
       </li>

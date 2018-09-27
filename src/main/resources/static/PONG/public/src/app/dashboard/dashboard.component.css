@@ -1,0 +1,19 @@
+body {
+    margin: 0;
+    background: red;
+    height: 100vh;
+}
+#container {
+    display: grid;
+    grid-template-columns: 330px auto 290px;
+    grid-column-gap: 5px;
+    height: 100vh;
+    border: 2px solid red;
+}
+app-left, app-right {
+    margin: 0px;
+    padding: 0px;
+    background: #2D2E2E;
+    height: 100%;
+    color: #fff;
+}

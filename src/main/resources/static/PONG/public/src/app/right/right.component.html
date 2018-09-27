@@ -2,27 +2,30 @@
   <nav>
       <ul>
         <li>
-          <a routerLink="">
+          <a [routerLink]="['/home', {outlets: {'right': ['Ss']}}]">
             <i class="material-icons">reorder</i>
           </a>
         </li>
         <li>
-          <a routerLink="posts">
+          <a [routerLink]="['/home', {outlets: {'right': ['Aa']}}]">
             <i class="material-icons">supervised_user_circle</i>
           </a>
         </li>
         <li>
-          <a routerLink="posts">
+          <a [routerLink]="['/home', {outlets: {'right': ['Bb']}}]">
             <i class="material-icons">supervised_user_circle</i>
           </a>
         </li>
         <li>
-          <a routerLink="posts">
+          <a [routerLink]="['/home', {outlets: {'right': ['Cc']}}]">
             <i class="material-icons">supervised_user_circle</i>
           </a>
         </li>
       </ul>
     </nav>
+    <div class="container">
+      <router-outlet name="right"></router-outlet>
+    </div>
     <!-- <p>online</p>  -->
     <!--<div>
     <div class="user">
