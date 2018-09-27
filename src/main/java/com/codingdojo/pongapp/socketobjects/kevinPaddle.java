@@ -3,10 +3,10 @@ package com.codingdojo.pongapp.socketobjects;
 public class kevinPaddle {
     final float MIN_Y;
     final float MAX_Y;
-    float x_center = 0;
-    float y_center = 0;
-    float vy = 0;
-    float friction = 1;
+    public float x_center = 0;
+    public float y_center = 0;
+    public float vy = 0;
+    public float friction = 1;
 
     kevinPaddle() {
         MIN_Y = -5;
@@ -23,7 +23,12 @@ public class kevinPaddle {
     }
 
     public void movement(Boolean[] upDown, float dt) {
-        vy += (dt * (upDown[1] ? 1 : 0) - dt * (upDown[0] ? 1 : 0));
+        if (upDown[0]) {
+            this.vy -= dt;
+        }
+        if (upDown[1]) {
+            this.vy += dt;
+        }
         y_center += vy * dt * friction;
         y_center = Math.min(y_center, MAX_Y);
         y_center = Math.max(MIN_Y, y_center);

@@ -70,9 +70,6 @@ public class PongGame {
         Boolean[] b = {allArray[2], allArray[3]};
         leftPaddle.movement(a, serverTic);
         rightPaddle.movement(b, serverTic);
-        System.out.println("LeftPaddleUser is "+leftUser+" RightPaddleUser is "+rightUser);
-        System.out.println("Left paddle up "+allArray[1]+" Left paddle down "+allArray[0]);
-        System.out.println("Right paddle up "+allArray[3]+" Right paddle down "+allArray[2]);
         Boolean[] temp = {false, false, false, false};
         allArray = temp;
         return this;
