@@ -100,7 +100,10 @@ function connect(callback){
     stompClient.connect({}, function (frame){
         console.log('Here Connected: ' + frame);
         stompClient.subscribe("/topic/thisGame", function (movement){
-            computerMove(movement);
+            let a = JSON.parse(movement["body"]);
+            a = JSON.parse(a["status"]);
+            console.log(JSON.parse(a.status));
+            // computerMove(movement);
         });
         callback();
     });
