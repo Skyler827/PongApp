@@ -10,7 +10,9 @@ public class PongGameState {
         ball = new Ball(0,0);
         rightPaddle = new Paddle(10,0);
     }
+    public void passTime(float dt) {
 
+    }
     @Override
     public String toString() {
         return "left paddle:" +leftPaddle+", ball: "+ ball+"right paddle: "+rightPaddle;

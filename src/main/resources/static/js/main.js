@@ -12,9 +12,7 @@ var left_paddle_mouse_grabber;
 var arr_mouse_grabber;
 var paused = false;
 
-var x = 10,
-    y = 5,
-    paddle_velY = 0,
+var paddle_velY = 0,
     paddle_velX = 0,
     speed = .5,
     accel = .02,
