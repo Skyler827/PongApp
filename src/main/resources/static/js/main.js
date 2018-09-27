@@ -141,6 +141,7 @@ function paddleCollision(paddle, ball, player){
         if(col && !leftPlayerHit){
             leftPlayerHit = true;
             rightPlayerHit = false;
+            playSoundOnce('/sound/ping.mp3');
             let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
             let distanceFromCenter = hitPoint.y - paddle.position.y;
             ball_vx*=-1;
@@ -155,6 +156,7 @@ function paddleCollision(paddle, ball, player){
         if(col && !rightPlayerHit){
             rightPlayerHit = true;
             leftPlayerHit = false;
+            playSoundOnce('/sound/ding.mp3');
             let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
             let distanceFromCenter = hitPoint.y - paddle.position.y;
             ball_vx*=-1;
@@ -170,6 +172,7 @@ function paddleCollision(paddle, ball, player){
 function returnBall() {
     ball.position.x = 0;
     ball.position.y = 0;
+    playSoundOnce('/sound/out.mp3');
 }
 function pauseGame() {
     paused = true;
@@ -253,5 +256,16 @@ function animate() {
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 }
-
+function sound() {
+    myAudio = new Audio('/sound/audio.mp3'); 
+myAudio.addEventListener('ended', function() {
+    this.currentTime = 0;
+    this.play();
+}, false);
+myAudio.play();
+}
+ function playSoundOnce(path) {
+    bgSound = new Audio(path);
+    bgSound.play(); 
+}
 init(animate);
