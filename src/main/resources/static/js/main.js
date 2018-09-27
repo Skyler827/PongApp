@@ -99,7 +99,7 @@ function connect(callback){
     var socket = new SockJS("/ourGame");
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame){
-        console.log('Connected: ' + frame);
+        console.log('Here Connected: ' + frame);
         stompClient.subscribe("/topic/thisGame", function (movement){
             computerMove(movement);
         });
@@ -159,7 +159,6 @@ function computeNextCollision() {
 }
 function computerMove(movement) {
     movement = JSON.parse(movement["body"]);
-    console.log(movement);
     if (movement["top"]) {
         if (paddle_velY > -speed) {
             paddle_velY += accel;
@@ -208,7 +207,7 @@ function update() {
     t = performance.now()/1000;
     collide();
     let tempMovement = {"top":topM+"", "bottom":bottom+"", "left":left+"", "right":right+""};
-    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
+    // stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
 
 
 

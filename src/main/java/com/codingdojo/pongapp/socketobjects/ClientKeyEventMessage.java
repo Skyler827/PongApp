@@ -2,6 +2,8 @@ package com.codingdojo.pongapp.socketobjects;
 
 public class ClientKeyEventMessage {
 
+    private 
+
     private Boolean top;
     private Boolean bottom;
     private Boolean left;
@@ -12,12 +14,12 @@ public class ClientKeyEventMessage {
 
     }
 
-    public ClientKeyEventMessage(Boolean top, Boolean bottom, Boolean left, Boolean right) {
-        this.top = top;
-        this.bottom = bottom;
-        this.left = left;
-        this.right = right;
-    }
+    // public ClientKeyEventMessage(Boolean top, Boolean bottom, Boolean left, Boolean right) {
+    //     this.top = top;
+    //     this.bottom = bottom;
+    //     this.left = left;
+    //     this.right = right;
+    // }
 
     @Override
     public String toString(){
