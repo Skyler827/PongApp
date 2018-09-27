@@ -9,6 +9,8 @@ import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -24,7 +26,9 @@ import com.codingdojo.pongapp.models.User;
 import com.codingdojo.pongapp.repositories.RoleRepository;
 import com.codingdojo.pongapp.repositories.UserRepository;
 import com.codingdojo.pongapp.services.UserService;
+import com.codingdojo.pongapp.socketobjects.ClientKeyEventMessage;
 import com.codingdojo.pongapp.validators.UserValidator;
+import com.codingdojo.pongapp.socketobjects.PongGame;
 
 @Controller
 public class PongAppController {
@@ -36,7 +40,7 @@ public class PongAppController {
 	private UserValidator userValidator;
 	@Autowired
 	private RoleRepository roleRepository;
-	
+	private PongGame pongGame = new PongGame();
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
 		if(roleRepository.findByName("ROLE_USER") == null) {
@@ -60,7 +64,7 @@ public class PongAppController {
 		userValidator.validate(user, result);
 		if(result.hasErrors()) {
 			return "loginReg.jsp";
-		}else {
+		} else {
 			userService.saveUserWithRole(user);
 			
 			try {
@@ -83,4 +87,16 @@ public class PongAppController {
 		return "dashboard.jsp";
 	}
 	
+	@GetMapping("/game")
+	public String game(){
+	    return "redirect:/game.html";
+	}
+
+	@MessageMapping("/myMovements")
+	@SendTo("/topic/thisGame")
+	public ClientKeyEventMessage keyM(ClientKeyEventMessage message) throws Exception{
+	    pongGame.handleKeyEvent(message);
+	    System.out.println(pongGame.getStatus());
+		return message;
+	}
 }

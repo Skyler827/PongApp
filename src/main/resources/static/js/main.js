@@ -11,17 +11,17 @@ var gridHelper;
 var left_paddle_mouse_grabber;
 var arr_mouse_grabber;
 var paused = false;
+var topM = false, bottom = false, left = false, right = false;
+var stompClient = null;
 
-var x = 10,
-    y = 5,
-    paddle_velY = 0,
+var paddle_velY = 0,
     paddle_velX = 0,
     speed = .5,
     accel = .02,
     friction = .95,
     keys = [];
 
-function init() {
+function init(callback) {
     scene = new THREE.Scene();
     camera = new THREE.PerspectiveCamera( 75, window.innerWidth / window.innerHeight, .1, 1000 );
     directionalLight = new THREE.DirectionalLight( 0xffffff, 10 );
@@ -86,11 +86,24 @@ function init() {
     middle_line = new THREE.Mesh(midline_geo, white_material);
     middle_line.translateZ(-1);
     scene.add(middle_line);
-
+    
     t = 0;
     left_up = false; left_down = false; right_up = false; right_down = false;
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
+    connect(callback);
+}
+
+function connect(callback){
+    var socket = new SockJS("/ourGame");
+    stompClient = Stomp.over(socket);
+    stompClient.connect({}, function (frame){
+        console.log('Connected: ' + frame);
+        stompClient.subscribe("/topic/thisGame", function (movement){
+            computerMove(movement);
+        });
+        callback();
+    });
 }
 
 function onDocumentMouseMove(event) {
@@ -173,30 +186,26 @@ function resumeGame() {
 function computeNextCollision() {
 
 }
-function computerMove() {
-
-}
-function update() {
-    t = performance.now()/1000;
-    collide();
-
-    if (keys[38]) {
+function computerMove(movement) {
+    movement = JSON.parse(movement["body"]);
+    console.log(movement);
+    if (movement["top"]) {
         if (paddle_velY > -speed) {
             paddle_velY += accel;
         }
     }
-    
-    if (keys[40]) {
+
+    if (movement["bottom"]) {
         if (paddle_velY < speed) {
             paddle_velY -= accel;
         }
     }
-    if (keys[39]) {
+    if (movement["right"]) {
         if (paddle_velX < speed) {
             paddle_velX += accel;
         }
     }
-    if (keys[37]) {
+    if (movement["left"]) {
         if (paddle_velX > -speed) {
             paddle_velX -= accel;
         }
@@ -223,6 +232,13 @@ function update() {
             left_paddle.translateX(paddle_velX);
         }
     }
+}
+function update() {
+    t = performance.now()/1000;
+    collide();
+    let tempMovement = {"top":topM+"", "bottom":bottom+"", "left":left+"", "right":right+""};
+    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
+
 
     ball.translateX(0.05*ball_vx);
     ball.translateY(ball_vy);
@@ -237,15 +253,25 @@ function update() {
     right_paddle.position.y = ball.position.y;
 }
 
-
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
+
+    if(e.keyCode === 38) topM = true;
+    if(e.keyCode === 40) bottom = true;
+    if(e.keyCode === 37) left = true;
+    if(e.keyCode === 39) right = true;
+    
     if (e.keyCode === 32 && paused === true) {
         resumeGame();
     }
 });
 document.body.addEventListener("keyup", function (e) {
     keys[e.keyCode] = false;
+
+    if(e.keyCode === 38) topM = false;
+    if(e.keyCode === 40) bottom = false;
+    if(e.keyCode === 37) left = false;
+    if(e.keyCode === 39) right = false;
 });
 
 function animate() {
@@ -255,5 +281,4 @@ function animate() {
     renderer.render( scene, camera );
 }
 
-init();
-animate();
+init(animate);

@@ -23,7 +23,8 @@
 /dist/
 /nbdist/
 /.nb-gradle/
-
+## VSCode ##
+/.vscode
 
 # Angular
 # compiled output
