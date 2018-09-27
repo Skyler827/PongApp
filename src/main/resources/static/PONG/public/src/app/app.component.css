@@ -5,20 +5,19 @@ body {
 }
 #container {
     display: grid;
-    grid-template-columns: 70px 300px auto 290px;
-    grid-column-gap: 10px;
+    grid-template-columns: 70px 0px auto;
+    grid-column-gap: 5px;
     height: 100vh;
     border: 2px solid red;
 }
 #content {
     padding: 30px 50px;
 }
-app-left, app-right {
-    margin: 0px;
-    padding: 0px;
+app-main {
     background: #2D2E2E;
-    height: 100%;
-    color: #ffffff;
+    height: 10vh;
+    width: 100%;
+    color: red;
 }
 .inline {
     display: inline-block;
