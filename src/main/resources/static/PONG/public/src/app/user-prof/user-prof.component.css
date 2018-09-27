@@ -5,13 +5,13 @@
     padding: 5px 5px;
 }
 .user-image {
-    height: 100px;
-    width: 100px;
+    height: 90px;
+    width: 90px;
     background-color: rgb(115, 115, 233);
     border-radius: 50px;
 }
 .mini-info {
-    padding: 10px 20px;
+    padding: 5px 15px;
     vertical-align: top;
 }
 h3, h5 {
