@@ -40,7 +40,6 @@ public class PongAppController {
 	private UserValidator userValidator;
 	@Autowired
 	private RoleRepository roleRepository;
-	private PongGame curr_game;
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
 		if(roleRepository.findByName("ROLE_USER") == null) {
@@ -64,7 +63,7 @@ public class PongAppController {
 		userValidator.validate(user, result);
 		if(result.hasErrors()) {
 			return "loginReg.jsp";
-		}else {
+		} else {
 			userService.saveUserWithRole(user);
 			
 			try {
@@ -89,9 +88,6 @@ public class PongAppController {
 	
 	@GetMapping("/game")
 	public String game(){
-		if (curr_game == null) {
-		    curr_game = new PongGame();
-        }
 	    return "redirect:/game.html";
 	}
 
