@@ -39,10 +39,10 @@ function init(callback) {
     point_light.translateZ(-10);
     scene.add(point_light);
 
-    left_paddle_geo = new THREE.BoxGeometry( 0.5, 3, 1 );
+    left_paddle_geo = new THREE.BoxGeometry( 0.5, 4, 1 );
 
     // Texture wrapping for left paddle
-    var paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg");
+    let paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg");
     paddleTexture.minFilter = THREE.LinearFilter;
     white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
     left_paddle = new THREE.Mesh(left_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture}));
@@ -58,9 +58,11 @@ function init(callback) {
     // left_paddle_mouse_grabber.translateY(+2);
     scene.add(left_paddle_mouse_grabber);
 
-    right_paddle_geo= new THREE.BoxGeometry( 1, 3, 1 );
-    right_paddle = new THREE.Mesh(right_paddle_geo, white_material);
-    right_paddle.translateX(10);
+    let paddleTexture2 = new THREE.TextureLoader().load("/img/wood_texture3.jpg");
+    paddleTexture2.minFilter = THREE.LinearFilter;
+    right_paddle_geo= new THREE.BoxGeometry( 0.5, 4, 1 );
+    right_paddle = new THREE.Mesh(right_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture2}));
+    right_paddle.translateX(15);
     right_paddle.translateY(-3);
     scene.add(right_paddle);
 
@@ -148,7 +150,7 @@ function paddleCollision(paddle, ball, player){
             if(Math.abs(ball_vx) < 28){
                 ball_vx *= 1.05;
             }
-            ball_vy = 0.1*distanceFromCenter;
+            ball_vy = 0.2*distanceFromCenter;
             count++;
         }
     }
@@ -163,7 +165,7 @@ function paddleCollision(paddle, ball, player){
             if(Math.abs(ball_vx) < 28){
                 ball_vx *= 1.05;
             }
-            ball_vy = 0.1*distanceFromCenter;
+            ball_vy = 0.2*distanceFromCenter;
             count++;
         }
     }
