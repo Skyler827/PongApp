@@ -13,6 +13,9 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -32,6 +35,7 @@ import com.codingdojo.pongapp.socketobjects.ClientKeyEventMessage;
 import com.codingdojo.pongapp.validators.UserValidator;
 import com.codingdojo.pongapp.socketobjects.PongGame;
 
+@EnableScheduling
 @Controller
 public class PongAppController {
 	@Autowired
@@ -41,8 +45,13 @@ public class PongAppController {
 	@Autowired
 	private UserValidator userValidator;
 	@Autowired
+    private SimpMessagingTemplate template;
+	@Autowired
 	private RoleRepository roleRepository;
 	private PongGame pongGame = new PongGame();
+	private final int tickRate = 100;
+
+
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
 		if(roleRepository.findByName("ROLE_USER") == null) {
@@ -95,24 +104,19 @@ public class PongAppController {
 
 	
 	@GetMapping("/game")
-	public String game(){
+	public String game(Principal p) {
+		pongGame.addUser(p.getName());
 	    return "redirect:/game.html";
 	}
 
 	@MessageMapping("/myMovements")
-	@SendTo("/topic/thisGame")
-	public ClientKeyEventMessage keyM(ClientKeyEventMessage message) throws Exception{
-	    pongGame.handleKeyEvent(message);
-	    System.out.println(pongGame.getStatus());
-		return message;
+	public void keyM(ClientKeyEventMessage message, Principal p) throws Exception{
+		// System.out.println("From user "+p.getName());
+	    pongGame.handleKeyEvent(message, p.getName());
 	}
 
-	// @MessageMapping("/addUser")
-    // @SendTo("/topic/thisGame")
-    // public ClientKeyEventMessage addUser(Principal p, @Payload ClientKeyEventMessage ClientKeyEventMessage, 
-    //                            SimpMessageHeaderAccessor headerAccessor) {
-    //     // Add username in web socket session
-    //     headerAccessor.getSessionAttributes().put("username", p.getName());
-    //     return ClientKeyEventMessage;
-    // }
+	@Scheduled(fixedRate = tickRate)
+	public void serverTick(){
+		this.template.convertAndSend("/topic/thisGame", pongGame.runGame(tickRate));
+	}
 }

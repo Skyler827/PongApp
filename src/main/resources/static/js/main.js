@@ -103,10 +103,21 @@ function connect(callback){
     stompClient.connect({}, function (frame){
         console.log('Here Connected: ' + frame);
         stompClient.subscribe("/topic/thisGame", function (movement){
-            computerMove(movement);
+            let a = JSON.parse(movement["body"]);
+            a = JSON.parse(a["status"]);
+            // console.log(a);
+            onlineMovement(a);
+            // computerMove(movement);
         });
         callback();
     });
+}
+
+function onlineMovement(gameState){
+    if(!paused){
+        left_paddle.position.y = gameState["left"]["y_position"];
+        right_paddle.position.y = gameState["right"]["y_position"]
+    }
 }
 
 function onDocumentMouseMove(event) {
@@ -228,7 +239,7 @@ function computerMove(movement) {
             left_paddle.translateY(paddle_velY);
         }
     }
-        }
+}
 function update() {
     t = performance.now()/1000;
     deathMatch();
@@ -249,7 +260,6 @@ function update() {
         returnBall();
         pauseGame();
     }
-    right_paddle.position.y = ball.position.y;
 }
 
 document.body.addEventListener("keydown", function (e) {
