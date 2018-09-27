@@ -6,19 +6,23 @@ import org.dyn4j.dynamics.Body;
 import org.dyn4j.dynamics.BodyFixture;
 import org.dyn4j.dynamics.World;
 import org.dyn4j.geometry.Rectangle;
+import org.dyn4j.geometry.Circle;
 public class PongGame {
     Bounds bounds;
     World world;
     Rectangle r;
+    Circle c;
     BodyFixture lp_bf;
     Body lp_body;
-
     BodyFixture rp_bf;
     Body rp_body;
+    
+
     public PongGame() {
         bounds = new AxisAlignedBounds(40,20);
         world = new World(bounds);
         r = new Rectangle(1,3);
+        c = new Circle(0.5);
 
         // left paddle:
         lp_bf = new BodyFixture(r);
@@ -31,6 +35,10 @@ public class PongGame {
         lp_bf.setFriction(1.3);
         rp_body = new Body(1);
         rp_body.addFixture(lp_bf);
+
+        //ball:
+
+        ball_bf = new BodyFixture(c);
 
         world.addBody(lp_body);
         world.addBody(rp_body);
