@@ -46,7 +46,7 @@ function init() {
     paddleTexture.minFilter = THREE.LinearFilter;
     white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
     left_paddle = new THREE.Mesh(left_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture}));
-    left_paddle.translateX(-10);
+    left_paddle.translateX(-15);
     scene.add(left_paddle);
 
     left_paddle_mouse_grabber_geo = new THREE.BoxGeometry(4,12,0.8);
@@ -79,7 +79,7 @@ function init() {
     ball = new THREE.Mesh(ball_geo, ball_mesh);
     scene.add(ball);
     ball_vx = 4;
-    ball_vy = 1;
+    ball_vy = 0;
 
     // Center line
     midline_geo= new THREE.BoxGeometry(.2, 30, -1);
@@ -106,23 +106,53 @@ function onDocumentMouseMove(event) {
 function collide() {
 	//Checking both paddles, could be limited with direction of ball velocity
 	//Could also be checked if the ball is close to the a paddle
-    paddleCollision(left_paddle, ball);
-    paddleCollision(right_paddle, ball);
+    paddleCollision(left_paddle, ball, "left");
+    paddleCollision(right_paddle, ball, "right");
     
-    var next_y = ball.position.y + ball_vy*0.05;
-    if (5 < next_y || next_y < -5) {
+    var next_y = ball.position.y + ball_vy;
+    if (8 < next_y || next_y < -8) {
         ball_vy *= -1;
     }
 }
 
-//Checks if the paddle passed in is in collision with the ball
-function paddleCollision(paddle, ball){
-	let p = new THREE.Box3().setFromObject(paddle);
+//Checks if the paddle passed in is in collision with the ball. Only detect collision once per side to avoid ball being hit multiple times
+var leftPlayerHit, rightPlayerHit
+var count = 0;
+function paddleCollision(paddle, ball, player){
+    let p = new THREE.Box3().setFromObject(paddle);
+    // p.expandByVector(new THREE.Vector3(10,0,0)); 
 	let b = new THREE.Box3().setFromObject(ball);
-	let col = p.intersectsBox(b);
-	if(col){
-		ball_vx *= -1;
-	}
+    let col = b.intersectsBox(p);
+     
+    if(player == "left"){
+        if(col && !leftPlayerHit){
+            leftPlayerHit = true;
+            rightPlayerHit = false;
+            let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
+            let distanceFromCenter = hitPoint.y - paddle.position.y;
+            ball_vx*=-1;
+            if(Math.abs(ball_vx) < 28){
+                ball_vx *= 1.05;
+            }
+            ball_vy = 0.1*distanceFromCenter;
+            count++;
+        }
+    }
+    if(player == "right"){
+        if(col && !rightPlayerHit){
+            rightPlayerHit = true;
+            leftPlayerHit = false;
+            let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
+            let distanceFromCenter = hitPoint.y - paddle.position.y;
+            ball_vx*=-1;
+            if(Math.abs(ball_vx) < 28){
+                ball_vx *= 1.05;
+            }
+            ball_vy = 0.1*distanceFromCenter;
+            count++;
+        }
+    }
+    console.log(count, ball_vx);
 }
 
 function returnBall() {
@@ -149,6 +179,7 @@ function computerMove() {
 function update() {
     t = performance.now()/1000;
     collide();
+
     if (keys[38]) {
         if (paddle_velY > -speed) {
             paddle_velY += accel;
@@ -171,14 +202,14 @@ function update() {
         }
     }
 
-    // Paddle position constraint
+    // Paddle movement and position constraint
     paddle_velY *= friction;
     if(paddle_velY > 0){
-        if(left_paddle.position.y <= 5){
+        if(left_paddle.position.y <= 8){
             left_paddle.translateY(paddle_velY);
         }
     }else{
-        if(left_paddle.position.y >= -5){
+        if(left_paddle.position.y >= -8){
             left_paddle.translateY(paddle_velY);
         }
     }
@@ -188,15 +219,18 @@ function update() {
             left_paddle.translateX(paddle_velX);
         }
     }else{
-        if(left_paddle.position.x >= -10){
+        if(left_paddle.position.x >= -15){
             left_paddle.translateX(paddle_velX);
         }
     }
 
-
     ball.translateX(0.05*ball_vx);
-    ball.translateY(0.05*ball_vy);
+    ball.translateY(ball_vy);
     if (Math.abs(ball.position.x)>20) {
+        ball_vx = 4;
+        ball_vy = 0;
+        leftPlayerHit = false;
+        rightPlayerHit = false;
         returnBall();
         pauseGame();
     }
@@ -206,7 +240,6 @@ function update() {
 
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
-    console.log(e.keyCode);
     if (e.keyCode === 32 && paused === true) {
         resumeGame();
     }
