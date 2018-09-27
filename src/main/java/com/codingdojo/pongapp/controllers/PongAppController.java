@@ -82,5 +82,10 @@ public class PongAppController {
 	public String dashboard() {
 		return "dashboard.jsp";
 	}
+	@GetMapping("/api/users")
+	public List<User> userList() {
+		return userService.findAll();
+	}
+
 	
 }
