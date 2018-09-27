@@ -28,6 +28,7 @@ import com.codingdojo.pongapp.repositories.UserRepository;
 import com.codingdojo.pongapp.services.UserService;
 import com.codingdojo.pongapp.socketobjects.ClientKeyEventMessage;
 import com.codingdojo.pongapp.validators.UserValidator;
+import com.codingdojo.pongapp.socketobjects.PongGame;
 
 @Controller
 public class PongAppController {
@@ -39,7 +40,7 @@ public class PongAppController {
 	private UserValidator userValidator;
 	@Autowired
 	private RoleRepository roleRepository;
-	
+	private PongGame curr_game;
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
 		if(roleRepository.findByName("ROLE_USER") == null) {
@@ -88,13 +89,16 @@ public class PongAppController {
 	
 	@GetMapping("/game")
 	public String game(){
-		return "/static/game.html";
+		if (curr_game == null) {
+		    curr_game = new PongGame();
+        }
+	    return "redirect:/game.html";
 	}
 
 	@MessageMapping("/myMovements")
 	@SendTo("/topic/thisGame")
 	public ClientKeyEventMessage keyM(ClientKeyEventMessage message) throws Exception{
-		System.out.println(message);
+//		System.out.println(curr_game);
 		return message;
 	}
 }

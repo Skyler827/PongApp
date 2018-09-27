@@ -2,11 +2,20 @@ package com.codingdojo.pongapp.socketobjects;
 
 public class Ball extends GameObject {
     float radius;
+    static final float MIN_X = -10;
+    static final float MAX_X = 10;
+    static final float MIN_Y = -5;
+    static final float MAX_Y = 5;
+
     public Ball() {
         super(0,0);
+        setVx(3);
+        setVy(1);
     }
     public Ball(float x, float y) {
         super(x, y);
+        setVx(3);
+        setVy(1);
     }
     public boolean collideHorizontal(Paddle paddle, float dt) {
         return Math.abs(this.getX()+this.getVx()*dt-(paddle.getX()+paddle.getVx()*dt)) < this.radius + paddle.getWidth();
@@ -15,29 +24,12 @@ public class Ball extends GameObject {
         return Math.abs(this.getY()+this.getVy()*dt-(paddle.getY())+paddle.getVy()*dt) < this.radius + paddle.getHeight();
     }
     public void movement(float dt, Paddle left, Paddle right) {
-        // check collision left
-        if (collideHorizontal(left, dt)) {
-            if (collideVertical(right, dt)) {
-                //ball is touching or within paddle
-            } else {
-                //ball is above or below paddle
-
-            }
-        } else {
-            // ball is away from paddle
+        if (MIN_X < getX() || getX() < MAX_X) {
+            setVx(-1*getVx());
         }
-
-        // check collision right
-        if (Math.abs(this.getX()-right.getX()) < this.radius + right.getWidth()) {
-            if (Math.abs(this.getY()-right.getY()) < this.radius + right.getHeight()) {
-                //ball is touching or within paddle
-            } else {
-                //ball is above or below paddle
-
-            }
-        } else {
-            // ball is away from paddle
+        if (MIN_Y < getY() || getY() < MAX_Y) {
+            setVy(-1*getVy());
         }
-
+        move(dt);
     }
 }

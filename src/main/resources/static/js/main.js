@@ -101,7 +101,7 @@ function connect(callback){
     stompClient.connect({}, function (frame){
         console.log('Connected: ' + frame);
         stompClient.subscribe("/topic/thisGame", function (movement){
-            console.log((movement));
+            computerMove(movement);
         });
         callback();
     });
@@ -157,31 +157,26 @@ function resumeGame() {
 function computeNextCollision() {
 
 }
-function computerMove() {
-
-}
-function update() {
-    t = performance.now()/1000;
-    collide();
-    let tempMovement = {"top":topM+"", "bottom":bottom+"", "left":left+"", "right":right+""};
-    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
-    if (keys[38]) {
+function computerMove(movement) {
+    movement = JSON.parse(movement["body"]);
+    console.log(movement);
+    if (movement["top"]) {
         if (paddle_velY > -speed) {
             paddle_velY += accel;
         }
     }
-    
-    if (keys[40]) {
+
+    if (movement["bottom"]) {
         if (paddle_velY < speed) {
             paddle_velY -= accel;
         }
     }
-    if (keys[39]) {
+    if (movement["right"]) {
         if (paddle_velX < speed) {
             paddle_velX += accel;
         }
     }
-    if (keys[37]) {
+    if (movement["left"]) {
         if (paddle_velX > -speed) {
             paddle_velX -= accel;
         }
@@ -208,6 +203,13 @@ function update() {
             left_paddle.translateX(paddle_velX);
         }
     }
+}
+function update() {
+    t = performance.now()/1000;
+    collide();
+    let tempMovement = {"top":topM+"", "bottom":bottom+"", "left":left+"", "right":right+""};
+    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
+
 
 
     ball.translateX(0.05*ball_vx);
@@ -222,10 +224,10 @@ function update() {
 document.body.addEventListener("keydown", function (e) {
     keys[e.keyCode] = true;
 
-    if(e.keyCode == 38) topM = true;
-    if(e.keyCode == 40) bottom = true;
-    if(e.keyCode == 37) left = true;
-    if(e.keyCode == 39) right = true;
+    if(e.keyCode === 38) topM = true;
+    if(e.keyCode === 40) bottom = true;
+    if(e.keyCode === 37) left = true;
+    if(e.keyCode === 39) right = true;
     
     if (e.keyCode === 32 && paused === true) {
         resumeGame();
@@ -234,10 +236,10 @@ document.body.addEventListener("keydown", function (e) {
 document.body.addEventListener("keyup", function (e) {
     keys[e.keyCode] = false;
 
-    if(e.keyCode == 38) topM = false;
-    if(e.keyCode == 40) bottom = false;
-    if(e.keyCode == 37) left = false;
-    if(e.keyCode == 39) right = false;
+    if(e.keyCode === 38) topM = false;
+    if(e.keyCode === 40) bottom = false;
+    if(e.keyCode === 37) left = false;
+    if(e.keyCode === 39) right = false;
 });
 
 function animate() {

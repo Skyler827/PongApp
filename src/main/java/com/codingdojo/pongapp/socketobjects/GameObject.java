@@ -12,7 +12,10 @@ public abstract class GameObject {
         vx = 0;
         vy = 0;
     }
-
+    public void move(float dt) {
+        x += vx*dt;
+        y += vy*dt;
+    }
     public float getX() {
         return x;
     }
