@@ -26,7 +26,7 @@ public class PongGame {
         }else if(rightUser == null){
             rightUser = user;
         }else{
-            spectators.add(user);
+            
         }
         System.out.println("Left User "+leftUser+" Right User "+rightUser);
     }
