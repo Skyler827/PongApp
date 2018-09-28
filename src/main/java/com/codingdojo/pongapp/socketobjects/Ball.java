@@ -8,10 +8,11 @@ public class Ball {
     public float radius;
     public kevinPaddle leftPaddle;
     public kevinPaddle rightPaddle;
+    private boolean left = false;
     Ball() {}
     Ball(float x, float y, kevinPaddle left, kevinPaddle right) {
         this.x = x; this.y = y; this.leftPaddle = left; this.rightPaddle = right;
-        vx = 6; vy = 10; radius = (float)0.5;
+        vx = 3; vy = 3; radius = (float)0.5;
     }
     void timeStep(float dt) {
         x += vx * dt;
@@ -19,7 +20,7 @@ public class Ball {
     }
     public void move(float dt){
         if(vx < 0){
-            checkCollision(rightPaddle);
+            checkCollision(leftPaddle);
         }else{
             checkCollision(rightPaddle);
         }
@@ -35,9 +36,24 @@ public class Ball {
 
     public void checkCollision(kevinPaddle paddle){
         if(Math.abs(Math.abs(x)-Math.abs(paddle.x_center)) <= (paddle.width + radius)){
-            if(Math.abs(Math.abs(y)-Math.abs(paddle.y_center)) <= (paddle.height + radius)){
-                System.out.println("Collided with paddle");
-                vx *= -1;
+            if(Math.abs(y-paddle.y_center) <= (paddle.height + radius)){
+                if(x < 0 && left){
+                    // System.out.println("CHANGED DIRECTION");
+                    left = false;
+                    vx *= -1;
+                    if(vx < 49){
+                        vx*=1.1;
+                    }
+                    // System.out.println("Ball Speed"+vx);
+                }else if(x > 0 && !left){
+                    // System.out.println("CHANGED DIRECTION");
+                    left = true;
+                    vx *= -1;
+                    if(vx > -49){
+                        vx*=1.1;
+                    }
+                    // System.out.println("Ball Speed"+vx);
+                }
             }
         }
     }

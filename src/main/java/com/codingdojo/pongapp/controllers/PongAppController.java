@@ -112,7 +112,6 @@ public class PongAppController {
 
 	@MessageMapping("/myMovements")
 	public void keyM(ClientKeyEventMessage message, Principal p) throws Exception{
-		// System.out.println("From user "+p.getName());
 	    pongGame.handleKeyEvent(message, p.getName());
 	}
 

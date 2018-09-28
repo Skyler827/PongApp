@@ -115,12 +115,12 @@ function connect(callback){
 }
 
 function onlineMovement(gameState){
-    if(!paused){
+    // if(!paused){
         left_paddle.position.y = gameState["left"]["y_position"];
         right_paddle.position.y = gameState["right"]["y_position"];
         ball.position.x = gameState["ball"]["x_position"];
         ball.position.y = gameState["ball"]["y_position"];
-    }
+    // }
 }
 
 function onDocumentMouseMove(event) {
@@ -247,17 +247,17 @@ function update() {
     stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
 
 
-    ball.translateX(0.05*ball_vx);
-    ball.translateY(ball_vy);
-    if (Math.abs(ball.position.x)>20) {
-        ball_vx = 4;
-        ball_vy = 0;
-        leftPlayerHit = false;
-        rightPlayerHit = false;
-        runOnce = false;
-        returnBall();
-        pauseGame();
-    }
+    // ball.translateX(0.05*ball_vx);
+    // ball.translateY(ball_vy);
+    // if (Math.abs(ball.position.x)>20) {
+    //     ball_vx = 4;
+    //     ball_vy = 0;
+    //     leftPlayerHit = false;
+    //     rightPlayerHit = false;
+    //     runOnce = false;
+    //     returnBall();
+    //     pauseGame();
+    // }
     // right_paddle.position.y = ball.position.y;
 }
 
