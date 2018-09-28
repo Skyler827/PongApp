@@ -16,7 +16,7 @@ public class PongGame {
     public PongGame() {
         b = new Ball(0,0);
         leftPaddle = new kevinPaddle((float)-10, (float)0, (float)0.95);
-        rightPaddle = new kevinPaddle((float)-10, (float)0, (float)0.95);
+        rightPaddle = new kevinPaddle((float)10, (float)0, (float)0.95);
     }
 
     public void addUser(String user){

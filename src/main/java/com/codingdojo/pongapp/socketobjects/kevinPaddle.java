@@ -24,10 +24,10 @@ public class kevinPaddle {
 
     public void movement(Boolean[] upDown, float dt) {
         if (upDown[0]) {
-            this.vy -= dt;
+            this.vy -= 10*dt;
         }
         if (upDown[1]) {
-            this.vy += dt;
+            this.vy += 10*dt;
         }
         vy = vy * friction;
         y_center += vy;

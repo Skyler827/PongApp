@@ -6,30 +6,50 @@
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
     <style>
-        body {margin:0; background-color: black;overflow:hidden}
-        #content-container {
-            position: absolute;
-            z-index:5;
-            vertical-align: top;
-        }
-        h1 {
-            color: white;
-            text-align: center;
-        }
-        #sidebar {
-            width: 300px;
-            background-color: lightblue;
-        }
-        #canvas_container {
-            position: absolute;
-        }
-        #resume-anchor {
-            display: none;
-        }
-        #count{
-            display:flex;
-        }
-    </style>
+body {
+	margin: 0;
+	background-color: black;
+	overflow: hidden
+}
+
+#container {
+	position: absolute;
+	z-index: 5;
+	margin: 30px;
+}
+
+#scorebox{
+	display: flex;
+	/* width: 100%; */
+	justify-content: center;
+	position: absolute;
+}
+#scorebox h1 {
+	color: white;
+	z-index: 5;
+	font-size: 10em;
+	color: white;
+/* 	left: 50%;
+	-webkit-transform: translateX(-50%);
+	transform: translateX(-50%);
+	margin: 0; */
+}
+
+#sidebar {
+	width: 200px;
+	background-color: white;
+	padding: 10px;
+}
+
+#canvas_container {
+	position: absolute;
+}
+
+#resume-anchor {
+	display: none;
+}
+
+</style>
     <script>
         function kevintemp(){
             $("#")
@@ -37,12 +57,12 @@
     </script>
 </head>
 <body>
-    <div id="content-container">
-        <h1>Super cool Pong App</h1>            
+	<!-- <div id="scorebox"><h1>20</h1> <h1>0</h1></div> -->
+	<div id="container">
         <div id="sidebar">
             <a id="pause-anchor" href="#" onclick="pauseGame()"><p>Pause Game</p></a>
             <a id="resume-anchor" href="#" onclick="resumeGame()"><p>Resume Game</p></a>
-            <a href="#" onclick="sound()"><p>Play Beats</p></a>
+            <a href="#" onclick="sound('/sound/normalmusic.wav')"><p>Play Beats</p></a>
         </div>
     </div>
     <div id="canvas_container"></div>

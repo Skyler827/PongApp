@@ -13,6 +13,7 @@ var arr_mouse_grabber;
 var paused = false;
 var topM = false, bottom = false;
 var stompClient = null;
+var myAudio = new Audio();
 
 var paddle_velY = 0,
     paddle_velX = 0,
@@ -39,10 +40,10 @@ function init(callback) {
     point_light.translateZ(-10);
     scene.add(point_light);
 
-    left_paddle_geo = new THREE.BoxGeometry( 0.5, 3, 1 );
+    left_paddle_geo = new THREE.BoxGeometry( 0.5, 4, 1 );
 
     // Texture wrapping for left paddle
-    var paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg");
+    let paddleTexture = new THREE.TextureLoader().load("/img/wood_texture2.jpg");
     paddleTexture.minFilter = THREE.LinearFilter;
     white_material = new THREE.MeshStandardMaterial( { color: 0xffffff } );
     left_paddle = new THREE.Mesh(left_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture}));
@@ -58,9 +59,11 @@ function init(callback) {
     // left_paddle_mouse_grabber.translateY(+2);
     scene.add(left_paddle_mouse_grabber);
 
-    right_paddle_geo= new THREE.BoxGeometry( 1, 3, 1 );
-    right_paddle = new THREE.Mesh(right_paddle_geo, white_material);
-    right_paddle.translateX(10);
+    let paddleTexture2 = new THREE.TextureLoader().load("/img/wood_texture3.jpg");
+    paddleTexture2.minFilter = THREE.LinearFilter;
+    right_paddle_geo= new THREE.BoxGeometry( 0.5, 4, 1 );
+    right_paddle = new THREE.Mesh(right_paddle_geo, new THREE.MeshPhongMaterial({color:0xffffff, map:paddleTexture2}));
+    right_paddle.translateX(15);
     right_paddle.translateY(-3);
     scene.add(right_paddle);
 
@@ -147,40 +150,51 @@ function paddleCollision(paddle, ball, player){
     // p.expandByVector(new THREE.Vector3(10,0,0)); 
 	let b = new THREE.Box3().setFromObject(ball);
     let col = b.intersectsBox(p);
-     
+    
     if(player == "left"){
         if(col && !leftPlayerHit){
             leftPlayerHit = true;
             rightPlayerHit = false;
+            playSoundOnce('/sound/dding.mp3');
             let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
             let distanceFromCenter = hitPoint.y - paddle.position.y;
             ball_vx*=-1;
             if(Math.abs(ball_vx) < 28){
                 ball_vx *= 1.05;
             }
-            ball_vy = 0.1*distanceFromCenter;
+            ball_vy = 0.2*distanceFromCenter;
             count++;
         }
+
     }
     if(player == "right"){
         if(col && !rightPlayerHit){
             rightPlayerHit = true;
             leftPlayerHit = false;
+            playSoundOnce('/sound/ddingother.mp3');
             let hitPoint = new THREE.Vector3((b.intersect(p).max.x + b.intersect(p).min.x)*.5, (b.intersect(p).max.y + b.intersect(p).min.y)*.5, (b.intersect(p).max.z + b.intersect(p).min.z)*.5);
             let distanceFromCenter = hitPoint.y - paddle.position.y;
             ball_vx*=-1;
             if(Math.abs(ball_vx) < 28){
                 ball_vx *= 1.05;
             }
-            ball_vy = 0.1*distanceFromCenter;
+            ball_vy = 0.2*distanceFromCenter;
             count++;
         }
     }
 }
 
+var runOnce;
+function deathMatch(){
+    if (ball_vx > 20 && !runOnce){
+        runOnce = true;
+        sound('/sound/deathmatch.wav');
+    }
+}
 function returnBall() {
     ball.position.x = 0;
     ball.position.y = 0;
+    playSoundOnce('/sound/out.mp3');
 }
 function pauseGame() {
     paused = true;
@@ -191,6 +205,7 @@ function resumeGame() {
     paused = false;
     document.querySelector("#pause-anchor").style.display = "inline";
     document.querySelector("#resume-anchor").style.display = "none";
+    sound('/sound/normalmusic.wav');
     animate();
 }
 function computeNextCollision() {
@@ -227,6 +242,7 @@ function computerMove(movement) {
 }
 function update() {
     t = performance.now()/1000;
+    deathMatch();
     collide();
     let tempMovement = {"top":topM+"", "bottom":bottom};
     stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
@@ -239,6 +255,8 @@ function update() {
         ball_vy = 0;
         leftPlayerHit = false;
         rightPlayerHit = false;
+        runOnce = false;
+        myAudio.pause();
         returnBall();
         pauseGame();
     }
@@ -263,5 +281,17 @@ function animate() {
     requestAnimationFrame( animate );
     renderer.render( scene, camera );
 }
+function sound(path) {
+    myAudio.src = path;
+    myAudio.addEventListener('ended', function() {
+    this.currentTime = 0;
+    this.play();
+    }, false);
 
+    myAudio.play();
+}
+function playSoundOnce(path) {
+    bgSound = new Audio(path);
+    bgSound.play(); 
+}
 init(animate);
