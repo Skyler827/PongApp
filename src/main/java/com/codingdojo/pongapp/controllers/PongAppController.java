@@ -117,6 +117,10 @@ public class PongAppController {
 
 	@Scheduled(fixedRate = tickRate)
 	public void serverTick(){
-		this.template.convertAndSend("/topic/thisGame", pongGame.runGame(tickRate));
+		try {
+			this.template.convertAndSend("/topic/thisGame", pongGame.runGame(tickRate));
+		}catch (Exception e){
+			
+		}
 	}
 }

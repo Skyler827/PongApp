@@ -8,8 +8,8 @@ public class PongGame {
     Ball b;
     kevinPaddle leftPaddle;
     kevinPaddle rightPaddle;
-    String leftUser;
-    String rightUser;
+    String leftUser = null;
+    String rightUser = null;
     ArrayList<String> spectators;
     Boolean[] allArray = {false, false, false, false};
 
@@ -31,23 +31,8 @@ public class PongGame {
         System.out.println("Left User "+leftUser+" Right User "+rightUser);
     }
 
-    public void handleCollision(Ball b, Paddle p) {
-        float horizontalDisplacement = b.x-p.x_center;
-        float verticalDisplacement = b.y-p.y_center;
-        boolean horizontalCondition = horizontalDisplacement < p.width/2 + b.radius;
-        boolean verticalCondition = verticalDisplacement<p.height/2 + b.radius;
-        if (horizontalCondition) {
-            if (verticalCondition) {
-                //collision:
-                if (horizontalDisplacement > 0) b.vx = 1;
-                else b.vx = -1;
-                b.vy = verticalDisplacement;
-            }
-        }
-    }
-
     public String getStatus() {
-        String temp = "{ \"left\": { \"x_position\": "+ leftPaddle.x_center +", \"y_position\": "+ leftPaddle.y_center +", \"speed\": "+ leftPaddle.vy +", \"friction\": "+leftPaddle.friction+"}, \"right\": { \"x_position\": "+ rightPaddle.x_center +", \"y_position\": "+ rightPaddle.y_center +", \"speed\": "+ rightPaddle.vy +", \"friction\": "+rightPaddle.friction+"}}";
+        String temp = "{ \"left\": { \"x_position\": "+ leftPaddle.x_center +", \"y_position\": "+ leftPaddle.y_center +", \"speed\": "+ leftPaddle.vy +", \"friction\": "+leftPaddle.friction+"}, \"right\": { \"x_position\": "+ rightPaddle.x_center +", \"y_position\": "+ rightPaddle.y_center +", \"speed\": "+ rightPaddle.vy +", \"friction\": "+rightPaddle.friction+"}, \"ball\":{ \"x_position\": "+ b.x +", \"y_position\": "+ b.y +", \"x_speed\": "+ b.vx +", \"y_speed\":"+ b.vy +"}}";
         return temp;
     }
 
@@ -66,10 +51,14 @@ public class PongGame {
     }
 
     public PongGame runGame(int serverTic){
-        Boolean[] a = {allArray[0], allArray[1]};
-        Boolean[] b = {allArray[2], allArray[3]};
-        leftPaddle.movement(a, ((float)serverTic)/1000);
-        rightPaddle.movement(b, ((float)serverTic)/1000);
+        if(rightUser == null){
+            return null;
+        }
+        Boolean[] tempArrayLeft = {allArray[0], allArray[1]};
+        Boolean[] tempArrayRight = {allArray[2], allArray[3]};
+        leftPaddle.movement(tempArrayLeft, ((float)serverTic)/1000);
+        rightPaddle.movement(tempArrayRight, ((float)serverTic)/1000);
+        b.move(((float)serverTic)/1000);
         Boolean[] temp = {false, false, false, false};
         allArray = temp;
         return this;
