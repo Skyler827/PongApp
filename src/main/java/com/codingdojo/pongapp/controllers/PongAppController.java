@@ -1,7 +1,9 @@
 package com.codingdojo.pongapp.controllers;
 
 import java.security.Principal;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -10,9 +12,6 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.Payload;
-import org.springframework.messaging.handler.annotation.SendTo;
-import org.springframework.messaging.simp.SimpMessageHeaderAccessor;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,9 +20,7 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.codingdojo.pongapp.models.Role;
@@ -32,8 +29,8 @@ import com.codingdojo.pongapp.repositories.RoleRepository;
 import com.codingdojo.pongapp.repositories.UserRepository;
 import com.codingdojo.pongapp.services.UserService;
 import com.codingdojo.pongapp.socketobjects.ClientKeyEventMessage;
-import com.codingdojo.pongapp.validators.UserValidator;
 import com.codingdojo.pongapp.socketobjects.PongGame;
+import com.codingdojo.pongapp.validators.UserValidator;
 
 @EnableScheduling
 @Controller
@@ -51,9 +48,12 @@ public class PongAppController {
 	private PongGame pongGame = new PongGame();
 	private final int tickRate = 10;
 
+	UUID uuid = UUID.randomUUID();
+	HashMap<UUID, PongGame> gamesMap = new HashMap<>();
 
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
+		
 		if(roleRepository.findByName("ROLE_USER") == null) {
 			roleRepository.save(new Role("ROLE_USER"));
 		}
@@ -95,6 +95,7 @@ public class PongAppController {
 	
 	@GetMapping("/dashboard")
 	public String dashboard() {
+		System.out.println(uuid);
 		return "dashboard.jsp";
 	}
 	@GetMapping("/api/users")
@@ -123,4 +124,8 @@ public class PongAppController {
 			
 		}
 	}
+	//  TODO: each time a game room is created, create a UUID (Universally Unique Identifier) and make a reference to the 		PongGame object using a hash table. Doing so will get around having to constantly retrieving data from the database to 		check if a game room is active/inactive.
+	
+	//	PongGame game = new PongGame();
+	//	gamesMap.put(UUID.randomUUID(), game);
 }

@@ -12,7 +12,9 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -49,6 +51,18 @@ public class User {
         joinColumns = @JoinColumn(name = "user_id"), 
         inverseJoinColumns = @JoinColumn(name = "role_id"))
     private List<Role> roles;
+    
+    @OneToOne
+    @JoinColumn(name="player1_id")
+    private GameRoom gameRoom_player1;
+    
+    @OneToOne
+    @JoinColumn(name="player2_id")
+    private GameRoom gameRoom_player2;
+    
+    @ManyToOne
+    @JoinColumn(name="spectator_id")
+    private GameRoom gameRoom_spectators;
     
     public User() {
     }
@@ -107,5 +121,29 @@ public class User {
 	}
 	public void setUsername(String username) {
 		this.username = username;
+	}
+	public List<MatchHistory> getMatchHistory() {
+		return matchHistory;
+	}
+	public void setMatchHistory(List<MatchHistory> matchHistory) {
+		this.matchHistory = matchHistory;
+	}
+	public GameRoom getGameRoom_player1() {
+		return gameRoom_player1;
+	}
+	public void setGameRoom_player1(GameRoom gameRoom_player1) {
+		this.gameRoom_player1 = gameRoom_player1;
+	}
+	public GameRoom getGameRoom_player2() {
+		return gameRoom_player2;
+	}
+	public void setGameRoom_player2(GameRoom gameRoom_player2) {
+		this.gameRoom_player2 = gameRoom_player2;
+	}
+	public GameRoom getGameRoom_spectators() {
+		return gameRoom_spectators;
+	}
+	public void setGameRoom_spectators(GameRoom gameRoom_spectators) {
+		this.gameRoom_spectators = gameRoom_spectators;
 	}
 }
