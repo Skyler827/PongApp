@@ -1,42 +1,66 @@
 package com.codingdojo.pongapp.socketobjects;
 
+import java.util.ArrayList;
+
+import com.fasterxml.jackson.databind.util.JSONPObject;
+
 public class PongGame {
     Ball b;
-    Paddle leftPaddle;
-    Paddle rightPaddle;
+    kevinPaddle leftPaddle;
+    kevinPaddle rightPaddle;
+    String leftUser = null;
+    String rightUser = null;
+    ArrayList<String> spectators;
+    Boolean[] allArray = {false, false, false, false};
+
     public PongGame() {
         b = new Ball(0,0);
-        leftPaddle = new PlayerPaddle(-10, 0, -10,-10);
-        rightPaddle = new ComputerPaddle(10, 0, 10,10);
+        leftPaddle = new kevinPaddle((float)-10, (float)0, (float)0.95);
+        rightPaddle = new kevinPaddle((float)10, (float)0, (float)0.95);
     }
-    void move(float dt) {
-        handleCollision(b, leftPaddle);
-        handleCollision(b, rightPaddle);
-        b.timeStep(dt);
-        leftPaddle.timeStep(dt);
-        rightPaddle.timeStep(dt);
+
+    public void addUser(String user){
+        System.out.println("Adding user");
+        if(leftUser == null){
+            leftUser = user;
+        }else if(rightUser == null){
+            rightUser = user;
+        }else{
+            
+        }
+        System.out.println("Left User "+leftUser+" Right User "+rightUser);
     }
-    static void handleCollision(Ball b, Paddle p) {
-        float horizontalDisplacement = b.x-p.x_center;
-        float verticalDisplacement = b.y-p.y_center;
-        boolean horizontalCondition = horizontalDisplacement < p.width/2 + b.radius;
-        boolean verticalCondition = verticalDisplacement<p.height/2 + b.radius;
-        if (horizontalCondition) {
-            if (verticalCondition) {
-                //collision:
-                if (horizontalDisplacement > 0) b.vx = 1;
-                else b.vx = -1;
-                b.vy = verticalDisplacement;
-            }
+
+    public String getStatus() {
+        String temp = "{ \"left\": { \"x_position\": "+ leftPaddle.x_center +", \"y_position\": "+ leftPaddle.y_center +", \"speed\": "+ leftPaddle.vy +", \"friction\": "+leftPaddle.friction+"}, \"right\": { \"x_position\": "+ rightPaddle.x_center +", \"y_position\": "+ rightPaddle.y_center +", \"speed\": "+ rightPaddle.vy +", \"friction\": "+rightPaddle.friction+"}, \"ball\":{ \"x_position\": "+ b.x +", \"y_position\": "+ b.y +", \"x_speed\": "+ b.vx +", \"y_speed\":"+ b.vy +"}}";
+        return temp;
+    }
+
+    //Set movement top and bottom of each of the paddle's
+    //We get the username from the principal and since we're going to make username's 
+    //unique we will only have one possible client sending them.
+    //We will only set the movement top or bottom to false after the server tick is over
+    public void handleKeyEvent(ClientKeyEventMessage kem, String username) {
+        if(username.equals(leftUser)){
+            allArray[0] = allArray[0] || kem.getBottom();
+            allArray[1] = allArray[1] || kem.getTop();
+        }else if(username.equals(rightUser)){
+            allArray[2] = allArray[2] || kem.getBottom();
+            allArray[3] = allArray[3] || kem.getTop();
         }
     }
-    public String getStatus() {
-        return "Pong game: Left Paddle: "+leftPaddle.getStatus()
-                +", Right Paddle: " + rightPaddle.getStatus()
-                +", Ball: "+b.getStatus();
-    }
-    public void handleKeyEvent(ClientKeyEventMessage kem) {
-        leftPaddle.downKeyPressed = kem.getBottom();
-        leftPaddle.upKeyPressed = kem.getTop();
+
+    public PongGame runGame(int serverTic){
+        if(rightUser == null){
+            return null;
+        }
+        Boolean[] tempArrayLeft = {allArray[0], allArray[1]};
+        Boolean[] tempArrayRight = {allArray[2], allArray[3]};
+        leftPaddle.movement(tempArrayLeft, ((float)serverTic)/1000);
+        rightPaddle.movement(tempArrayRight, ((float)serverTic)/1000);
+        b.move(((float)serverTic)/1000);
+        Boolean[] temp = {false, false, false, false};
+        allArray = temp;
+        return this;
     }
 }
