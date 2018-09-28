@@ -2,8 +2,6 @@ package com.codingdojo.pongapp.socketobjects;
 
 import java.util.ArrayList;
 
-import com.fasterxml.jackson.databind.util.JSONPObject;
-
 public class PongGame {
     Ball b;
     kevinPaddle leftPaddle;
@@ -14,9 +12,9 @@ public class PongGame {
     Boolean[] allArray = {false, false, false, false};
 
     public PongGame() {
-        b = new Ball(0,0);
-        leftPaddle = new kevinPaddle((float)-10, (float)0, (float)0.95);
-        rightPaddle = new kevinPaddle((float)10, (float)0, (float)0.95);
+        leftPaddle = new kevinPaddle((float)-15, (float)0, (float)0.95);
+        rightPaddle = new kevinPaddle((float)15, (float)0, (float)0.95);
+        b = new Ball(0,0, leftPaddle, rightPaddle);
     }
 
     public void addUser(String user){

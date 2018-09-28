@@ -7,6 +7,8 @@ public class kevinPaddle {
     public float y_center = 0;
     public float vy = 0;
     public float friction = 1;
+    public float width = (float)0.5;
+    public float height = 40;
 
     kevinPaddle() {
         MIN_Y = -5;
