@@ -29,7 +29,8 @@ public class kevinPaddle {
         if (upDown[1]) {
             this.vy += dt;
         }
-        y_center += vy * dt * friction;
+        vy = vy * friction;
+        y_center += vy;
         y_center = Math.min(y_center, MAX_Y);
         y_center = Math.max(MIN_Y, y_center);
         if(y_center == MAX_Y || y_center == MIN_Y){

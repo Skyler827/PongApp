@@ -49,7 +49,7 @@ public class PongAppController {
 	@Autowired
 	private RoleRepository roleRepository;
 	private PongGame pongGame = new PongGame();
-	private final int tickRate = 100;
+	private final int tickRate = 10;
 
 
 	@GetMapping("/login")
