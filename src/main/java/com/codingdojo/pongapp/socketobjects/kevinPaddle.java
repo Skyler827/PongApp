@@ -24,12 +24,13 @@ public class kevinPaddle {
 
     public void movement(Boolean[] upDown, float dt) {
         if (upDown[0]) {
-            this.vy -= dt;
+            this.vy -= 10*dt;
         }
         if (upDown[1]) {
-            this.vy += dt;
+            this.vy += 10*dt;
         }
-        y_center += vy * dt * friction;
+        this.vy *= friction;
+        y_center += vy * dt;
         y_center = Math.min(y_center, MAX_Y);
         y_center = Math.max(MIN_Y, y_center);
         if(y_center == MAX_Y || y_center == MIN_Y){

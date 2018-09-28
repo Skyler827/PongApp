@@ -15,8 +15,8 @@ public class PongGame {
 
     public PongGame() {
         b = new Ball(0,0);
-        leftPaddle = new kevinPaddle((float)-10, (float)0, (float)1);
-        rightPaddle = new kevinPaddle((float)-10, (float)0, (float)1);
+        leftPaddle = new kevinPaddle((float)-15, (float)0, (float)0.95);
+        rightPaddle = new kevinPaddle((float)15, (float)0, (float)0.95);
     }
 
     public void addUser(String user){
@@ -68,8 +68,8 @@ public class PongGame {
     public PongGame runGame(int serverTic){
         Boolean[] a = {allArray[0], allArray[1]};
         Boolean[] b = {allArray[2], allArray[3]};
-        leftPaddle.movement(a, serverTic);
-        rightPaddle.movement(b, serverTic);
+        leftPaddle.movement(a, ((float)serverTic)/1000);
+        rightPaddle.movement(b, ((float)serverTic)/1000);
         Boolean[] temp = {false, false, false, false};
         allArray = temp;
         return this;
