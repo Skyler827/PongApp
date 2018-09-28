@@ -103,7 +103,7 @@ function connect(callback){
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame){
         // console.log('Here Connected: ' + frame);
-        stompClient.subscribe("/topic/thisGame", function (movement){
+        stompClient.subscribe("/topic/game/"+gameRoomId, function (movement){
             let a = JSON.parse(movement["body"]);
             a = JSON.parse(a["status"]);
             // console.log(a);
@@ -244,7 +244,7 @@ function update() {
     deathMatch();
     collide();
     let tempMovement = {"top":topM+"", "bottom":bottom};
-    stompClient.send("/app/myMovements", {}, JSON.stringify(tempMovement));
+    stompClient.send("/app/game/"+gameRoomId, {}, JSON.stringify(tempMovement));
 
 
     // ball.translateX(0.05*ball_vx);

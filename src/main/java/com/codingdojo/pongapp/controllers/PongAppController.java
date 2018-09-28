@@ -18,10 +18,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import com.codingdojo.pongapp.models.Role;
 import com.codingdojo.pongapp.models.User;
@@ -45,11 +42,8 @@ public class PongAppController {
     private SimpMessagingTemplate template;
 	@Autowired
 	private RoleRepository roleRepository;
-	private PongGame pongGame = new PongGame();
-	private final int tickRate = 10;
-
-	UUID uuid = UUID.randomUUID();
-	HashMap<UUID, PongGame> gamesMap = new HashMap<>();
+	private long nextIdCounter = 1;
+	HashMap<Long, PongGame> gamesMap = new HashMap<>();
 
 	@GetMapping("/login")
     public String login(Principal principal, @RequestParam(value="error", required=false) String error, @RequestParam(value="logout", required=false) String logout, Model model, @ModelAttribute User user) {
@@ -87,7 +81,11 @@ public class PongAppController {
 			return "redirect:/dashboard";	
 		}
 	}
-	
+	private long getNextId() {
+		long x = nextIdCounter;
+		nextIdCounter += 1;
+		return x;
+	}
 	@GetMapping("/")
 	public String success() {
 		return "redirect:/dashboard";
@@ -95,7 +93,6 @@ public class PongAppController {
 	
 	@GetMapping("/dashboard")
 	public String dashboard() {
-		System.out.println(uuid);
 		return "dashboard.jsp";
 	}
 	@GetMapping("/api/users")
@@ -103,26 +100,45 @@ public class PongAppController {
 		return userService.findAll();
 	}
 
-	
-	@GetMapping("/game")
-	public String game(Principal p) {
-		pongGame.addUser(p.getName());
-	    return "redirect:/game.html";
+	@GetMapping("/creategame")
+	public String newPongGame(Principal p) {
+		long x = getNextId();
+		PongGame g = new PongGame(x);
+		gamesMap.put(x, g);
+		g.addUser(p.getName());
+
+		return "redirect:/game/"+g.getId();
 	}
 
-	@MessageMapping("/myMovements")
-	public void keyM(ClientKeyEventMessage message, Principal p) throws Exception{
-	    pongGame.handleKeyEvent(message, p.getName());
-	}
-
-	@Scheduled(fixedRate = tickRate)
-	public void serverTick(){
-		try {
-			this.template.convertAndSend("/topic/thisGame", pongGame.runGame(tickRate));
-		}catch (Exception e){
-			
+	@GetMapping("/game/{id}")
+	public String joinSpecificGame(
+			@PathVariable("id") long id, Model model,
+			Principal p
+	) {
+		PongGame g;
+		System.out.println("Size of gamesMap: "+gamesMap.size());
+		if (gamesMap.containsKey(id)) {
+			g = gamesMap.get(id);
+		} else {
+			System.out.println("game doesn't exist");
+			return "redirect:/dashboard";
 		}
+		g.addUser(p.getName());
+		System.out.println("see if we get there");
+		model.addAttribute("id", id);
+		return "game_init.jsp";
 	}
+
+
+	@MessageMapping("/game/{id}")
+	public void keyM(ClientKeyEventMessage message, Principal p, @PathVariable("id")Long id
+	) throws Exception{
+		System.out.println("getting here");
+	    PongGame g = gamesMap.get(id);
+	    if (g == null) {throw new Exception("Error: no such active game with id: "+id);}
+		g.handleKeyEvent(message, p.getName());
+	}
+
 	//  TODO: each time a game room is created, create a UUID (Universally Unique Identifier) and make a reference to the 		PongGame object using a hash table. Doing so will get around having to constantly retrieving data from the database to 		check if a game room is active/inactive.
 	
 	//	PongGame game = new PongGame();

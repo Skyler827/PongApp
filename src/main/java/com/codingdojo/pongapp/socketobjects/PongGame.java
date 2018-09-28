@@ -1,32 +1,48 @@
 package com.codingdojo.pongapp.socketobjects;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
+
 import java.util.ArrayList;
 
-public class PongGame {
-    Ball b;
-    kevinPaddle leftPaddle;
-    kevinPaddle rightPaddle;
-    String leftUser = null;
-    String rightUser = null;
-    ArrayList<String> spectators;
-    Boolean[] allArray = {false, false, false, false};
-
-    public PongGame() {
+public class PongGame implements Runnable{
+    @Autowired
+    private SimpMessagingTemplate template;
+    private Ball b;
+    private kevinPaddle leftPaddle;
+    private kevinPaddle rightPaddle;
+    private String leftUser = null;
+    private String rightUser = null;
+    private ArrayList<String> spectators;
+    private Boolean[] allArray = {false, false, false, false};
+    private long id;
+    public PongGame(long _id) {
+        System.out.println("creating pong G-MAE");
         leftPaddle = new kevinPaddle((float)-15, (float)0, (float)0.95);
         rightPaddle = new kevinPaddle((float)15, (float)0, (float)0.95);
         b = new Ball(0,0, leftPaddle, rightPaddle);
+        spectators = new ArrayList<>();
+        this.id = _id;
     }
-
+    public long getId() {return id;}
     public void addUser(String user){
         System.out.println("Adding user");
-        if(leftUser == null){
-            leftUser = user;
-        }else if(rightUser == null){
-            rightUser = user;
-        }else{
-            
+        try {
+            if (user.equals(leftUser)) {return;}
+            if (user.equals(rightUser)) {return;}
+            if(leftUser == null){
+                leftUser = user;
+            } else if(rightUser == null){
+                rightUser = user;
+                Thread t = new Thread(this);
+                t.run();
+            }else{
+                spectators.add(user);
+            }
+        } finally {
+            System.out.println("Left User "+leftUser+" Right User "+rightUser);
         }
-        System.out.println("Left User "+leftUser+" Right User "+rightUser);
     }
 
     public String getStatus() {
@@ -49,16 +65,33 @@ public class PongGame {
     }
 
     public PongGame runGame(int serverTic){
-        if(rightUser == null){
-            return null;
-        }
         Boolean[] tempArrayLeft = {allArray[0], allArray[1]};
         Boolean[] tempArrayRight = {allArray[2], allArray[3]};
         leftPaddle.movement(tempArrayLeft, ((float)serverTic)/1000);
         rightPaddle.movement(tempArrayRight, ((float)serverTic)/1000);
         b.move(((float)serverTic)/1000);
-        Boolean[] temp = {false, false, false, false};
-        allArray = temp;
+        allArray = new Boolean[]{false, false, false, false};
         return this;
+    }
+    @Override
+    public void run() {
+        runHelper(System.currentTimeMillis());
+    }
+    private void runHelper(long previousTime) {
+        long next_time = System.currentTimeMillis();
+        long this_time = System.currentTimeMillis();
+        try {
+            runGame((int)(this_time-previousTime));
+            this.template.convertAndSend("/topic/game/"+getId(), this);
+        }catch (Exception e){System.out.print(e);}
+        long x = System.currentTimeMillis() - previousTime;
+        if (x < 30) {
+            try {
+                Thread.sleep(30 - x);
+            } catch (InterruptedException e) {
+//                e.printStackTrace();
+            }
+        }
+//        runHelper(next_time);
     }
 }

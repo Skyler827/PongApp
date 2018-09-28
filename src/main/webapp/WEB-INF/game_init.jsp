@@ -1,0 +1,78 @@
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<!DOCTYPE HTML>
+<html>
+<head>
+    <meta charset="UTF-8"/>
+    <title>Pong App: Game</title>
+    <script src="/webjars/sockjs-client/sockjs.min.js"></script>
+    <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            background-color: black;
+            overflow: hidden
+        }
+
+        #container {
+            position: absolute;
+            z-index: 5;
+            margin: 30px;
+        }
+
+        #scorebox{
+            display: flex;
+            width: 100%;
+            justify-content: center;
+            position: absolute;
+        }
+        #scorebox h1 {
+            color: white;
+            z-index: 1;
+            font-size: 8em;
+            color: white;
+            margin: 0;
+        }
+        #scorebox h1:first-child{
+            margin-right: 50px;
+        }
+        #scorebox h1:nth-child(2){
+            margin-left: 50px;
+        }
+
+        #sidebar {
+            width: 200px;
+            background-color: white;
+            padding: 10px;
+        }
+
+        #canvas_container {
+            position: absolute;
+        }
+
+        #resume-anchor {
+            display: none;
+        }
+
+    </style>
+    <script>
+        var gameRoomId = ${id};
+        function kevintemp(){
+            $("#")
+        }
+    </script>
+</head>
+<body>
+<div id="scorebox"><h1>10  </h1><h1> 10</h1></div>
+<div id="container">
+    <div id="sidebar">
+        <a id="pause-anchor" href="#" onclick="pauseGame()"><p>Pause Game</p></a>
+        <a id="resume-anchor" href="#" onclick="resumeGame()"><p>Resume Game</p></a>
+        <a href="#" onclick="sound('/sound/normalmusic.wav')"><p>Play Beats</p></a>
+    </div>
+</div>
+<div id="canvas_container"></div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/96/three.js"></script>
+<script src="/js/main.js"></script>
+<script src="/js/resizeCanvas.js"></script>
+</body>
+</html>

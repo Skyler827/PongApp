@@ -8,6 +8,6 @@
 </head>
 <body>
 <h1>Dashboard | <form id="logout" method="POST" action="/logout"><input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/><input class="linkbutton" type="submit" value="Logout" /></form></h1>
-<a href="/game">Go to game</a>
+<a href="/creategame">Go to game</a>
 </body>
 </html>
