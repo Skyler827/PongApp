@@ -95,13 +95,14 @@ function init(callback) {
     mouse = new THREE.Vector2();
     raycaster = new THREE.Raycaster();
     connect(callback);
+    
 }
 
 function connect(callback){
     var socket = new SockJS("/ourGame");
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function (frame){
-        console.log('Here Connected: ' + frame);
+        // console.log('Here Connected: ' + frame);
         stompClient.subscribe("/topic/thisGame", function (movement){
             computerMove(movement);
         });
@@ -154,7 +155,6 @@ function paddleCollision(paddle, ball, player){
             ball_vy = 0.2*distanceFromCenter;
             count++;
         }
-
     }
     if(player == "right"){
         if(col && !rightPlayerHit){
@@ -194,16 +194,13 @@ function resumeGame() {
     paused = false;
     document.querySelector("#pause-anchor").style.display = "inline";
     document.querySelector("#resume-anchor").style.display = "none";
-    sound('/sound/normalmusic.wav');
     animate();
 }
-function computeNextCollision() {
 
-}
 function computerMove(movement) {
     movement = JSON.parse(movement["body"]);
 
-    console.log(movement);
+    // console.log(movement);
 
     if (movement["top"]) {
         if (paddle_velY > -speed) {
@@ -228,7 +225,7 @@ function computerMove(movement) {
             left_paddle.translateY(paddle_velY);
         }
     }
-        }
+}
 function update() {
     t = performance.now()/1000;
     deathMatch();
@@ -245,7 +242,6 @@ function update() {
         leftPlayerHit = false;
         rightPlayerHit = false;
         runOnce = false;
-        myAudio.pause();
         returnBall();
         pauseGame();
     }
