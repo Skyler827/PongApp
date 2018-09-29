@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+  <!-- Bootstrap core CSS -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Material Design Bootstrap -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.11/css/mdb.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
+  <title>Lobby</title>
+
+  <style>
+    tr { cursor: pointer; }
+    tbody tr:hover{ background: lightblue !important; }
+    tbody td > a{ display: block; }
+    .ready{ background-color: green; color: white; text-align: center;}
+    .not-ready{ background-color: red; color: white; text-align: center;}
+
+  </style>
+
+</head>
+
+<body>
+
+  <div class="container mt-3">
+    <table id="dtVerticalScrollExample" class="table table-striped table-bordered table-sm" cellspacing="0" width="100%">
+      <thead>
+        <tr>
+          <th class="th-sm">Game Name</th>
+          <th class="th-sm">Capacity</th>
+          <th class="th-sm">Elasped Time</th>
+          <th class="th-sm">Host</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><a href="#" data-toggle="modal" data-target="#centralModalLg">Hello World</a></td>
+          <td><a href="#" data-toggle="modal" data-target="#centralModalLg">1/2</a></td>
+          <td><a href="#" data-toggle="modal" data-target="#centralModalLg">10 minutes ago</a></td>
+          <td><a href="#" data-toggle="modal" data-target="#centralModalLg">Skyler Dache</a></td>
+        </tr>
+      </tbody>
+    </table>
+
+    <!-- Central Modal Small -->
+    <div class="modal fade" id="centralModalLg" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+
+      <!-- Change class .modal-sm to change the size of the modal -->
+      <div class="modal-dialog modal-lg" role="document">
+
+
+        <div class="modal-content">
+          <div class="modal-header">
+            <h4 class="modal-title w-100" id="myModalLabel">Hello World</h4>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div class="modal-body">
+              <table class="table table-borderless">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Player Name</th>
+                      <th scope="col">State</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <th scope="row">Player 1 (Host)</th>
+                      <td>Skyler Dache</td>
+                      <td class="ready">Ready</td>
+                    </tr>
+                    <tr>
+                      <th scope="row">Player 2</th>
+                      <td>Allen Chan</td>
+                      <td class="not-ready">Not Ready</td>
+                    </tr>
+                  </tbody>
+                </table>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary btn-sm" data-dismiss="modal">Leave</button>
+            <button type="button" class="btn btn-primary btn-sm">Start Game</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- JQuery -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+  <!-- Bootstrap tooltips -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.4/umd/popper.min.js"></script>
+  <!-- Bootstrap core JavaScript -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <!-- MDB core JavaScript -->
+  <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.11/js/mdb.min.js"></script>
+  <script type="text/javascript">
+    $(document).ready(function () {
+      $('#dtVerticalScrollExample').DataTable({
+        "scrollY": "400px",
+        "scrollCollapse": true,
+      });
+      $('.dataTables_length').addClass('bs-select');
+    });
+  </script>
+
+</body>
+
+</html>
