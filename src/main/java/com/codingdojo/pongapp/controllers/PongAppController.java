@@ -110,37 +110,49 @@ public class PongAppController {
 		return "redirect:/game/"+g.getId();
 	}
 
+	//
 	@GetMapping("/game/{id}")
 	public String joinSpecificGame(
 			@PathVariable("id") long id, Model model,
 			Principal p
 	) {
-		PongGame g;
+		PongGame g = gamesMap.get(id);
 		System.out.println("Size of gamesMap: "+gamesMap.size());
-		if (gamesMap.containsKey(id)) {
-			g = gamesMap.get(id);
-		} else {
+		if (g == null) {
 			System.out.println("game doesn't exist");
 			return "redirect:/dashboard";
 		}
 		g.addUser(p.getName());
-		System.out.println("see if we get there");
 		model.addAttribute("id", id);
 		return "game_init.jsp";
 	}
 
 
-	@MessageMapping("/game/{id}")
-	public void keyM(ClientKeyEventMessage message, Principal p, @PathVariable("id")Long id
+	@MessageMapping("/gameMovement")
+	public void keyM(ClientKeyEventMessage message, Principal p
 	) throws Exception{
-		System.out.println("getting here");
-	    PongGame g = gamesMap.get(id);
-	    if (g == null) {throw new Exception("Error: no such active game with id: "+id);}
+	    PongGame g = gamesMap.get(message.getGameId());
+		if (g == null) {throw new Exception("Error: no such active game with id: "+message.getGameId());}
 		g.handleKeyEvent(message, p.getName());
 	}
 
-	//  TODO: each time a game room is created, create a UUID (Universally Unique Identifier) and make a reference to the 		PongGame object using a hash table. Doing so will get around having to constantly retrieving data from the database to 		check if a game room is active/inactive.
-	
-	//	PongGame game = new PongGame();
-	//	gamesMap.put(UUID.randomUUID(), game);
+	//Would be great to get the different threads running to send 
+	//the gamestates themselves, but convertAndSend returns an error
+	//every time it's called from the ponggame.java thread
+	private final int tickRate = 10;
+	@Scheduled(fixedRate = tickRate)
+	public void serverTick(){
+		for(Long game : gamesMap.keySet()){
+			PongGame g = gamesMap.get(game);
+			if(g.isRunning){
+				try{
+					g.thread.run();
+					this.template.convertAndSend("/topic/game/"+game, g.getStatus());
+				}catch(Exception e){
+					System.out.println("Error on scheduled send out");
+					System.out.println(e);
+				}
+			}
+		}
+	}
 }

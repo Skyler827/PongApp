@@ -105,7 +105,8 @@ function connect(callback){
         // console.log('Here Connected: ' + frame);
         stompClient.subscribe("/topic/game/"+gameRoomId, function (movement){
             let a = JSON.parse(movement["body"]);
-            a = JSON.parse(a["status"]);
+            // console.log(a);
+            // a = JSON.parse(a["status"]);
             // console.log(a);
             onlineMovement(a);
             // computerMove(movement);
@@ -243,8 +244,8 @@ function update() {
     t = performance.now()/1000;
     deathMatch();
     collide();
-    let tempMovement = {"top":topM+"", "bottom":bottom};
-    stompClient.send("/app/game/"+gameRoomId, {}, JSON.stringify(tempMovement));
+    let tempMovement = {"top":topM+"", "bottom":bottom, "gameId":gameRoomId};
+    stompClient.send("/app/gameMovement", {}, JSON.stringify(tempMovement));
 
 
     // ball.translateX(0.05*ball_vx);
